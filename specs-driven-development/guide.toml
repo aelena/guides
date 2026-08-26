@@ -1,0 +1,9 @@
+slug = "spec-driven-development"
+author = "Antonio Elena"
+
+[[edition]]
+lang = "en"
+source = "sdd-guide.en.md"
+title = "Spec-Driven Development"
+subtitle = "A short guide to governing change when a model writes the code"
+edition = "Draft, version 0.3, August 2026"
