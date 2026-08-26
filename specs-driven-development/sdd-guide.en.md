@@ -2,7 +2,7 @@
 
 ### A short guide to governing change when a model writes the code
 
-**Version 0.2 · Draft · August 2026**
+**Version 0.3 · Draft · August 2026**
 
 > This guide is a synthesis from multiple sources, not original research. 
 > Sources listed at the end. Where I disagree with a source I say so.
@@ -29,7 +29,7 @@ small for illustrative purposes and to avoid the inherent complexity in the fixt
 
 ## 1. The problem is not the conversation
 
-Simply and naively, ask a model for a promotion engine or a loyalty program and you will sure get one, derived from God knows where - which I call derivative, rather than generative, AI. Ask again for tiering and seasonal multipliers and you get those too. Nothing about that is ineherently wrong but it is not complete, or the best, or what you or your customer really wanted or needed.
+Simply and naively, ask a model for a promotion engine or a loyalty program and you will sure get one, derived from God knows where - which I call derivative, rather than generative, AI. Ask again for tiering and seasonal multipliers and you get those too. Nothing about that is inherently wrong but it is not complete, or the best, or what you or your customer really wanted or needed.
 
 The problem is that the conversation is the only place the intent lives. And conversation is imprecise, ambiguous, it has low communication temperature and it is not an artifact.
 
@@ -44,7 +44,7 @@ They are invisible while a project is small. They arrive together when it grows,
 or the first time it goes to production.
 
 **Context disperses.** The rules end up spread across chat logs, tickets, a
-README, feedback by the water coooler and the code. Every new session reconstructs them from scratch, and reconstructs them slightly differently.
+README, feedback by the water cooler and the code. Every new session reconstructs them from scratch, and reconstructs them slightly differently.
 
 **Gaps get filled without agreement.** Faced with an ambiguity, a model picks
 something reasonable. Reasonable is not the same as agreed, and it is not
