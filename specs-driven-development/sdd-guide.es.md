@@ -1284,10 +1284,6 @@ en ninguna parte.
 - Verificar todas las citas de arriba. Las citas heredadas son la vía por la que se
   propagan los errores, y la entrada de Piskala contiene ahora un ejemplo resuelto
   de ello.
-- Carlos Azaustre tiene un texto en español sobre desarrollo dirigido por
-  especificación con agentes que debería estar aquí; su sitio devolvió 403 a una
-  petición automática, así que hay que leerlo a mano antes de poder citarlo o
-  discutirlo.
 - La guía tiene ahora tres fuentes a favor de la práctica y una que discute con
   ella. Esa proporción favorece a la práctica. Encontrar el mejor argumento
   disponible de que esto es una moda, y responderlo o concederlo.

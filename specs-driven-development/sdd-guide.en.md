@@ -1212,9 +1212,6 @@ should be verified against the original before this guide is published anywhere.
 
 - Verify every citation above. Inherited citations are how errors propagate, and
   the Piskala entry now contains a worked example of it.
-- Carlos Azaustre has a Spanish-language piece on spec-driven development with
-  agents that belongs here; his site returned 403 to an automated fetch, so it
-  needs reading by hand before it can be cited or disagreed with.
 - The guide now has three sources arguing for the practice and one arguing with
   it. That ratio flatters the practice. Find the best available argument that
   this is a fashion, and answer it or concede it.
