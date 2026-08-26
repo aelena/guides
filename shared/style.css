@@ -1,0 +1,188 @@
+/*
+ * The house style for the guides.
+ *
+ * One stylesheet for every guide, so a reader who buys two recognises the
+ * second. A guide may add its own style.css beside its guide.toml, which is
+ * appended after this one and therefore wins; that exists from the first day
+ * deliberately, because the alternative is that the first guide with a
+ * typographic need of its own forks the whole pipeline.
+ *
+ * Sizes are in millimetres and points, not pixels. This is print.
+ */
+
+@page {
+  size: A4;
+  margin: 24mm 22mm 22mm 22mm;
+
+  @bottom-center {
+    content: counter(page);
+    font-family: "Times New Roman", serif;
+    font-size: 9pt;
+    color: #666;
+  }
+}
+
+/* The cover carries no page number and no margin box. */
+@page cover {
+  margin: 0;
+  @bottom-center { content: none; }
+}
+
+html {
+  font-family: "Times New Roman", Georgia, serif;
+  font-size: 10.5pt;
+  line-height: 1.52;
+  color: #1a1a1a;
+  /* Off by default. It broke a display title as "Prompt-ing" once, and the
+     places that want it ask for it. */
+  hyphens: none;
+}
+
+body { margin: 0; }
+
+/* --- Cover ---------------------------------------------------------------- */
+
+.cover {
+  page: cover;
+  break-after: page;
+  height: 297mm;
+  padding: 86mm 22mm 0 22mm;
+  box-sizing: border-box;
+}
+
+.cover-title {
+  font-size: 34pt;
+  line-height: 1.12;
+  font-weight: normal;
+  margin: 0;
+  /* Never break a title across a hyphen, whatever the body does. */
+  hyphens: none;
+}
+
+.cover-subtitle {
+  font-size: 13pt;
+  line-height: 1.4;
+  color: #444;
+  margin: 10mm 0 0 0;
+  max-width: 130mm;
+}
+
+.cover-rule {
+  border: 0;
+  border-top: 0.6pt solid #1a1a1a;
+  width: 46mm;
+  margin: 14mm 0 0 0;
+  display: block;
+}
+
+.cover-author { font-size: 11.5pt; margin: 12mm 0 0 0; }
+.cover-edition { font-size: 9.5pt; color: #666; margin: 2mm 0 0 0; }
+
+/* --- Contents ------------------------------------------------------------- */
+
+.contents { break-after: page; }
+.contents h2 { break-before: avoid; margin-top: 0; }
+.contents ol { list-style: none; padding: 0; margin: 8mm 0 0 0; }
+.contents li { margin: 0 0 2.6mm 0; font-size: 10.5pt; }
+.contents .num { color: #888; display: inline-block; width: 9mm; }
+
+/* --- Headings ------------------------------------------------------------- */
+
+h1 { font-size: 20pt; font-weight: normal; margin: 0 0 6mm 0; }
+
+h2 {
+  font-size: 16pt;
+  font-weight: normal;
+  /* Each numbered section starts a page. A guide is read in sittings and
+     scanned by section, which is what the structure is for. */
+  break-before: page;
+  break-after: avoid;
+  margin: 0 0 6mm 0;
+  padding-bottom: 2mm;
+  border-bottom: 0.5pt solid #d8d8d8;
+}
+
+h3 {
+  font-size: 12pt;
+  font-weight: bold;
+  break-after: avoid;
+  margin: 7mm 0 2.5mm 0;
+}
+
+h4 { font-size: 10.5pt; font-weight: bold; break-after: avoid; margin: 5mm 0 2mm 0; }
+
+p { margin: 0 0 3.2mm 0; orphans: 3; widows: 3; }
+
+/* The source uses --- between sections, which would leave a stray rule at the
+   foot of every page now that h2 breaks. */
+hr { display: none; }
+
+/* --- Lists and quotes ----------------------------------------------------- */
+
+ul, ol { margin: 0 0 3.2mm 0; padding-left: 6.5mm; }
+li { margin-bottom: 1.4mm; }
+li > ul, li > ol { margin-top: 1.4mm; }
+
+blockquote {
+  margin: 4mm 0 4mm 0;
+  padding: 0 0 0 5mm;
+  border-left: 1.6pt solid #c8c8c8;
+  color: #333;
+  break-inside: avoid;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+
+/* --- Code ----------------------------------------------------------------- */
+
+code {
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 9pt;
+  background: #f4f4f4;
+  padding: 0.3mm 1mm;
+}
+
+pre {
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 8.6pt;
+  line-height: 1.4;
+  background: #f7f7f7;
+  border: 0.4pt solid #e0e0e0;
+  padding: 3mm;
+  margin: 4mm 0;
+  white-space: pre-wrap;
+  break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* --- Tables --------------------------------------------------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4mm 0;
+  font-size: 9.5pt;
+  break-inside: avoid;
+}
+
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 1.8mm 2.5mm;
+  border-bottom: 0.4pt solid #dcdcdc;
+}
+
+th {
+  border-bottom: 0.8pt solid #999;
+  font-weight: bold;
+  font-size: 9pt;
+}
+
+/* A table of two columns is usually a definition list wearing a table's
+   clothes, and the left column reads better narrow. */
+table th:first-child, table td:first-child { width: 30%; }
+
+strong { font-weight: bold; }
+em { font-style: italic; }
+a { color: #1a1a1a; text-decoration: none; border-bottom: 0.4pt solid #bbb; }

@@ -1,0 +1,9 @@
+dist/
+__pycache__/
+*.pyc
+*.tmp
+
+# The old corporate standards. They are marked Confidential, carry a former
+# employer's name and name colleagues, so they stay out of version control even
+# though the folder is useful to keep on disk as reference.
+_previous originals/

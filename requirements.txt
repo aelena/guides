@@ -1,0 +1,10 @@
+# Renders the PDF. Needs pango, cairo and harfbuzz, which is why build.sh runs
+# the whole thing in a container on Windows.
+weasyprint==63.1
+markdown==3.7
+# Rasterises page one of the built PDF into the cover. Apache-2.0 and BSD; the
+# AGPL alternative would not sit well beside anything sold.
+pypdfium2==5.0.0
+pillow==11.3.0
+# Builds the EPUB. Pure Python, so it adds no system dependency of its own.
+ebooklib==0.18
