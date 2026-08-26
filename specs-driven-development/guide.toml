@@ -7,3 +7,10 @@ source = "sdd-guide.en.md"
 title = "Spec-Driven Development"
 subtitle = "A short guide to governing change when a model writes the code"
 edition = "Draft, version 0.3, August 2026"
+
+[[edition]]
+lang = "es"
+source = "sdd-guide.es.md"
+title = "Desarrollo dirigido por especificación"
+subtitle = "Una guía breve para gobernar el cambio cuando el código lo escribe un modelo"
+edition = "Borrador, versión 0.3, agosto de 2026"
