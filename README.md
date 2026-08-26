@@ -85,7 +85,10 @@ Sizes are in millimetres and points. This is print.
 ## Conventions the sources follow
 
 - No em dashes. They are the most reliable tell of generated prose, and these
-  guides are sold on the assumption that a person wrote them.
+  guides are sold on the assumption that a person wrote them. The SDD guide
+  holds to this; `prd-json` was written before the rule and has seventy of
+  them, so it is a convention going forward rather than a description of
+  everything already here.
 - `---` between sections is fine in the source; the stylesheet hides it, because
   a horizontal rule at the foot of a page looks like a mistake once every
   section already starts its own page.
