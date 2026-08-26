@@ -1,0 +1,16 @@
+slug = "prd-json"
+author = "Antonio Elena"
+
+[[edition]]
+lang = "en"
+source = "prd-json-guide.en.md"
+title = "Writing a Solid prd.json"
+subtitle = "So an autonomous loop finishes the work instead of thrashing"
+edition = "Draft, August 2026"
+
+[[edition]]
+lang = "es"
+source = "prd-json-guide.es.md"
+title = "Cómo escribir un prd.json sólido"
+subtitle = "Para que un bucle autónomo termine el trabajo en vez de dar vueltas"
+edition = "Borrador, agosto de 2026"
