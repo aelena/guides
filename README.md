@@ -11,7 +11,7 @@ one Markdown file per language.
 
 | Directory | Guide | Editions |
 |---|---|---|
-| `specs-driven-development/` | Spec-Driven Development | en |
+| `specs-driven-development/` | Spec-Driven Development | en, es |
 | `prd-json/` | Writing a Solid prd.json | en, es |
 
 ## Building
