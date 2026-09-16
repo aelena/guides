@@ -2,7 +2,7 @@
 
 ### A short guide to governing change when a model writes the code
 
-**Version 0.3 · Draft · August 2026**
+**Version 0.4 · Draft · September 2026**
 
 > This guide is a synthesis from multiple sources, not original research. 
 > Sources listed at the end. Where I disagree with a source I say so.
@@ -656,7 +656,144 @@ because somebody still has to answer for the result.
 
 ---
 
-## 9. The adjacent layers
+## 9. The principles underneath
+
+Everything so far has been mechanisms: clarification markers, ratchets, gates,
+three positions on a spectrum. Mechanisms date. The tooling that carries them
+will have been replaced twice before this decade is out, and a guide that is only
+an inventory of current practice ages into a museum piece.
+
+So it is worth separating the mechanisms from whatever generates them. What
+follows are seven principles that the rest of this guide is an instance of. None
+of them mentions a tool, and none of them stops being true if the models get
+twice as good. Keep these and lose every tool named here, and you can rebuild the
+practice. Keep every tool and lose these, and you have the appearance of rigour
+that the previous sections keep warning about.
+
+### One: intent must be an artifact, not an event
+
+A conversation is an event. It happens, it ends, and what it settled survives
+only in whatever somebody happened to write down afterwards. An artifact
+persists, has an address, can be cited in an argument, and can be contradicted by
+a person who was not in the room.
+
+*Generates:* the repository in section 13, the insistence that a chat log is not
+a specification, and most of section 1.
+
+*What it costs:* writing things down, and the discipline to do it at the moment
+the decision is made rather than at the moment somebody asks.
+
+### Two: a system that cannot record uncertainty will manufacture certainty
+
+This is the generalisation of `[NEEDS CLARIFICATION]`, and it is not a fact about
+models. Any process whose output format has no slot for "undecided" produces
+documents with no undecided parts, because the format demands an answer and
+somebody, or something, supplies one. Models make this fast and visible. They did
+not invent it: a requirements document with no open questions section has never
+in the history of the practice meant that there were none.
+
+*Generates:* clarification markers, the blocking question in the Clarify phase,
+the `pending` row in the coverage matrix.
+
+*The test:* can your artifact say "I do not know", and does anything downstream
+refuse to move while it does?
+
+### Three: authority attaches to ratified decisions, not to formats
+
+No document is normative because of where it lives or what it is called. It is
+normative because somebody with the standing to decide has ratified it and the
+ratification is recorded. This is why section 14 refuses to let a test win an
+argument on the grounds of being executable, and why a wiki page can be
+authoritative while a YAML file is gossip.
+
+*Generates:* the ratification step, decision records, the conflict rules.
+
+*Where teams get this wrong:* they install a format and believe the authority
+arrived with it.
+
+### Four: whoever does the work must not own the oracle
+
+The single structural property that separates a ratchet from a ritual. If the
+same actor can produce the implementation and adjust the thing that judges it,
+the judgement carries no information, and it does not matter whether that actor
+is a model or a person in a hurry on a Friday.
+
+*Generates:* point three of the ratchet, the separation table in section 8, the
+permission boundaries in section 16.
+
+*Note the generality:* this is the oldest idea in the guide. Double-entry
+bookkeeping, peer review and the separation of powers are the same principle, and
+none of them was designed with software in mind.
+
+### Five: closure is computed, not declared
+
+"Done" is a claim. Closure is a verdict, derived from conditions a program can
+evaluate. The distinction survives any amount of improvement in whoever is making
+the claim, because the problem was never that the claimant is unreliable. It is
+that a claim and a verdict are different kinds of thing.
+
+*Generates:* the closure formula in section 15, the gate, confirm red.
+
+*The corollary people skip:* if you cannot compute it, you have not defined done.
+You have described a feeling about done.
+
+### Six: use the minimum rigour that removes the ambiguity
+
+Piskala's rule, promoted here to a principle because it is the one that stops the
+other six metastasising. Rigour is a cost paid to remove a specific ambiguity.
+Where there is no ambiguity there is nothing to buy, and the ceremony failure in
+section 3 is what happens when a team forgets the "minimum" and keeps the
+"rigour".
+
+*Generates:* the spectrum in section 7, and permission to do almost none of this
+on most changes.
+
+*Its enemy:* it is the only principle here that cannot be enforced mechanically,
+because a gate that checks whether you have too many gates is a joke with a
+maintenance burden.
+
+### Seven: the artifacts are the prompt
+
+Whatever you write down is read by the thing that writes the code. Headings
+decide what gets thought about, order decides what gets thought about first, and
+prohibitions are the only part of the process that acts before the mistake
+exists. Section 11 works this through; as a principle it means something
+uncomfortable, which is that your templates are model behaviour and your process
+documents are executable whether you intended them to be or not.
+
+*Generates:* templates as constraints, the constitution, the whole of section 11.
+
+*The trap:* a prompt is a request. Section 11 is also where that gets said.
+
+### The principles are not all compatible
+
+A list of principles that never conflict is a list nobody has used. Two tensions
+are worth naming, because you meet both in the first month.
+
+**One against six.** Every decision is worth an artifact, and most decisions are
+not worth the artifact. No formula resolves this, only the test in section 3:
+will somebody have to change this without having written it?
+
+**Three against five.** Authority is human and closure is mechanical, so there is
+always a band of things a person has ratified and no program can check. The
+honest response is to make that band visible rather than pretend it is empty. A
+requirement with no computable oracle is not a defective requirement, it is a
+requirement whose verification is a person, and the row should say so instead of
+sitting at `pending` forever looking like unfinished automation.
+
+| Principle | Mechanism it generates | What you get without it |
+|---|---|---|
+| Intent is an artifact | The repository, the change record | Archaeology |
+| Uncertainty is representable | Clarification markers, `pending` rows | Confident guesses, invisibly |
+| Authority is ratified, not formatted | Ratification, the conflict rules | Whoever edited last wins |
+| The worker does not own the oracle | The ratchet, permission boundaries | A green build that means nothing |
+| Closure is computed | The closure formula, the gate | "Done" as a mood |
+| Minimum rigour | The spectrum | Ceremony |
+| The artifacts are the prompt | Templates, the constitution | Somebody else's opinions, enforced silently |
+
+---
+
+## 10. The adjacent layers
 
 Spec-driven development is usually met alongside three or four other names, and
 it is worth being clear about how they relate, because they are routinely
@@ -741,7 +878,7 @@ the same instructions, and let it re-read the state from the filesystem each tim
 Because the state is on disk rather than in the harness, the loop survives context
 exhaustion, a crash, and a lost session.
 
-A phase machine of the kind described in section 14 is a *clever* loop, and clever
+A phase machine of the kind described in section 15 is a *clever* loop, and clever
 loops hold state. The Ralph reading suggests the phases should be reconstructible
 from disk rather than held in an orchestrator's memory, and that a local
 checkpoint is not a durable execution. That is a real design constraint, not a
@@ -774,7 +911,8 @@ second is relevant here.
 
 Presenting all five as named fields would overclaim. Presenting them as layers,
 each with a unit of concern and a characteristic blind spot, is defensible and
-more useful.
+more useful. The box in the third row, the harness, is the one this guide comes
+back to: section 16 is about building it.
 
 The reason this section comes before the tools is that it explains what to expect
 of them. Most tooling in this space is strong at one or two layers and silent
@@ -783,7 +921,7 @@ authority is not a feature.
 
 ---
 
-## 10. The template is a prompt
+## 11. The template is a prompt
 
 This is the idea in the current tooling that transfers best, and it is easy to
 miss because it arrives looking like paperwork.
@@ -863,14 +1001,14 @@ The design decision worth stealing regardless is that several articles are left
 deliberately blank, for the project to fill with its own non-negotiables. A
 constitution that arrives fully written is somebody else's constitution.
 
-So: read the ones you adopt. The three gates in the section before this one and
+So: read the ones you adopt. The three gates in section 8 and
 the articles above are not neutral scaffolding. They encode a specific view about
 project structure, abstraction and testing, and the parts that are wrong for you
 will otherwise be enforced silently for as long as nobody notices.
 
 ---
 
-## 11. How legal requirements are served by this
+## 12. How legal requirements are served by this
 
 Legal and ethical constraints are the most neglected class of requirement in
 software, and the one this machinery happens to fit best. Both halves of that are
@@ -996,7 +1134,7 @@ rather than after.
 
 ---
 
-## 12. One repository, four representations
+## 13. One repository, four representations
 
 If specifications are going to be normative, they need somewhere to live that is
 not a wiki. The arrangement that holds up is plain files in the same repository
@@ -1063,7 +1201,7 @@ they are not, you have built a personal wiki with extra steps.
 
 ---
 
-## 13. When artifacts disagree
+## 14. When artifacts disagree
 
 They will. The rule is that no artifact wins because of its format. The ratified
 decision in force wins.
@@ -1091,7 +1229,7 @@ What stays human is ratifying meaning. What stays mechanical is checking.
 
 ---
 
-## 14. The loop
+## 15. The loop
 
 Putting it together, a change moves through phases. These are internal states,
 not eleven screens.
@@ -1139,9 +1277,313 @@ thing being engineered.
 
 ---
 
-## 15. What to take away
+## 16. Harness engineering
 
-If you remember five things.
+Section 10 gave the loop a single row in a table and said its state lives "in the
+harness". This section is about that box, because it is where most of the
+distance between a demonstration and a system actually sits.
+
+A caveat on the name first, in the spirit of section 10. "Harness" is settled
+usage: it is what the agent tooling community calls the program around the model,
+and nobody argues about it. "Harness engineering" as a named discipline is not
+settled, and presenting it as one would overclaim in exactly the way that section
+warns against. Read it as a scope of work rather than as a field.
+
+> **The harness is everything that decides what the model sees, what it can do,
+> and what happens to what it produces.**
+
+The claim that earns it a section: **the model is the least controllable
+component in the system, and it is the one everybody tries to control first.**
+Prompt tweaks and model upgrades are the two levers that come to hand, and they
+have the worst ratio of effort to variance removed. Everything else is ordinary
+software, which means it can be specified, tested, versioned and reasoned about,
+and almost nobody does any of that to it.
+
+### What a harness contains
+
+| Component | Decides | What its absence looks like |
+|---|---|---|
+| Context assembly | What the model sees this turn | Rules obeyed on Tuesday and forgotten on Wednesday |
+| Tool surface | What actions exist at all | Inventive solutions to problems you did not know were reachable |
+| Permissions | Where writes may land | A test suite that agrees with the implementation |
+| Control loop | Continue, retry, stop, escalate | Runs that end when the money does |
+| Oracles | Who says it worked | "Done" |
+| State | What survives a crash | Work that cannot be resumed, only restarted |
+| Budget | What it costs before a person looks | The invoice as the first signal |
+| Record | What happened, reconstructible later | An outcome nobody can explain |
+
+Two things about that table. Only one row is about the model. And every row is
+ordinary engineering that nevertheless goes unreviewed in most teams, because a
+harness arrives as glue, and glue is not perceived as a component. A harness is a
+program. It has a specification or it has undocumented behaviour, and section 1
+already described what happens after that.
+
+### Designing one from scratch
+
+The instinct is to start with the loop, because the loop is the interesting part.
+It is the wrong end. A loop is defined by its exit condition and its exit
+condition is an oracle, so a harness designed loop-first arrives at a loop that
+runs until the model says it is done.
+
+Build in this order.
+
+**1. Name the unit of work.** A unit is what one iteration is expected to close.
+Get it wrong and everything above it misbehaves in ways that look like model
+problems: a unit too large never closes and sits at `pending` forever, a unit too
+small spends its whole budget re-establishing context. This is Ralph's variable
+from section 10, and it goes first because every later decision depends on it.
+
+**2. Write the oracle for one unit.** Before any orchestration exists, answer
+this: what program, run by somebody who does not trust me, decides whether this
+unit is finished? If there is no answer, stop. You do not have a harness problem,
+you have a specification problem, and building the harness first produces an
+efficient machine for arriving nowhere in particular.
+
+**3. Put the state on disk.** Whatever the next iteration needs to know must be
+readable from the filesystem rather than held in an orchestrator's memory. This
+is the Ralph argument from section 10 and it is a durability requirement, not a
+preference: a harness whose state lives in a process loses a day of work to a
+dropped connection.
+
+**4. Define the tool surface, and keep it small.** Every tool is a decision the
+model now gets to make. Tools are not free capability, they are branching factor.
+
+**5. Set permissions before the first run, not after the first incident.** Which
+paths are writable in which phase. The one people forget is not production, which
+everybody remembers, it is the oracle, which stays writable until somebody has
+watched a suite go green for the wrong reason.
+
+**6. Now write the loop.** Entry condition, exit condition, retry policy,
+escalation exit. It should be dull. If your loop is interesting, some of that
+cleverness is state that belongs on disk.
+
+**7. Add budgets, then the record.** A turn limit and a token budget per unit,
+and an append-only log of what ran, on which inputs, with which verdict. The
+record is what makes an incident answerable six weeks later, which is the thing
+section 1 says you lose first.
+
+The honest note to end on: a minimum viable harness is a shell script, a
+directory of files and a test command. Most teams reaching for an orchestration
+framework have not yet written down their oracle, and a framework does not supply
+one. It supplies retries, which is how a missing oracle becomes an expensive
+missing oracle.
+
+### Reducing errors without changing the model
+
+Same weights, fewer defects. This is the part of the work with the best return
+and the least literature. The levers are roughly in order of what they buy for
+what they cost.
+
+**Make the bad output unsayable.** Constrained or schema-guided decoding, from
+section 10. Moving a constraint from *rejected* to *cannot be emitted* deletes a
+class of retry rather than handling it. Anywhere the model must choose from a
+known set this applies, and the known sets are more common than they look:
+statuses, identifiers, file paths, phase names.
+
+**Shrink the decision surface.** Fewer tools, each narrower. One tool that does
+the right thing beats one tool with a flag selecting between the right thing and
+a footgun. The same goes for any configuration the model can see: every option is
+an opportunity to pick the other one.
+
+**Make failures instructive.** The cheapest large win available to most teams and
+the most consistently skipped. When a check fails, what the model reads next is
+your error message, and that message is a prompt whether or not anybody wrote it
+as one. An exit status of 1 produces guessing. *"FR-002 violated: balance 60000
+exceeds MAX_BALANCE 50000, see specs/FR-002.md"* produces a fix, because it names
+the rule, the observation and where to look. Error text is the highest-traffic
+prompt in the system and usually the only one nobody has edited.
+
+**Put the invariant first and the variable last.** Ordering for the provider's
+prefix cache, from section 10, and for salience at the same time. It saves money,
+and it makes the stable rules the thing the model has seen most.
+
+**Separate the sessions that are meant to disagree.** A review performed in the
+session that wrote the code inherits the reasoning that produced the bug.
+Different session, and where it matters different permissions: principle four,
+implemented with process boundaries.
+
+**Make retries earn their place.** The rule from section 10, restated as a
+harness setting: a retry is granted only when the input contains something new.
+Same failure signature and no new hypothesis means escalate, not repeat. Without
+this rule, a loop with a budget is a slower way to spend it.
+
+**Checkpoint at unit boundaries.** A failure should cost one unit of work rather
+than a session. State on disk again, seen from the cost side.
+
+**Take determinism wherever it is available.** Not from the model, from
+everything around it: pinned dependencies, fixed clocks, seeded generators,
+recorded fixtures. The aim is not reproducible generation, it is attributable
+failure. If a harness is non-deterministic in six places, no failure can be
+localised to the one place that is non-deterministic on purpose.
+
+Now the counterweight, because this reads too easily as a promise that
+scaffolding substitutes for capability. It does not. The test for whether you
+have hit the ceiling is: **would a competent person, given this context and these
+tools, succeed?** If yes and the agent fails, it is a harness problem and the
+levers above apply. If no, you have a decomposition problem dressed as a harness
+problem, and more scaffolding buys more expensive failure.
+
+There is also a way for a harness to make things actively worse, and it has a
+recognisable shape: **instruction collision.** A project file says one thing, a
+skill says a second, an injected template says a third, and none of the three
+authors knows the other two exist. The symptom is behaviour that varies between
+sessions for no visible reason, and the reflex, adding a fourth instruction
+telling the model how to prioritise the first three, is Böckeler's
+*Verschlimmbesserung* arriving on schedule. The fix is dull: one authority per
+question, and a periodic read of everything the model is actually sent, which is
+a thing remarkably few teams have ever looked at in full.
+
+### Validating an agent's work automatically
+
+"Automatically" carries a lot of weight in that question, so split it. Automatic
+checking of *compliance with something already agreed* is largely a solved
+engineering problem, and the rest of this section is about doing it well.
+Automatic checking of *whether the agreed thing was right* is not solved, is not
+close, and any tool claiming otherwise has moved the judgement somewhere you
+cannot see it.
+
+An oracle is whatever produces the verdict. They differ in what they can catch.
+
+| Oracle | The verdict it gives | Its blind spot |
+|---|---|---|
+| Schema or contract | The shape is legal | Says nothing about meaning |
+| Ratified example | This named case matches an agreed answer | Only the cases somebody wrote |
+| Property | A rule held across generated inputs | Easy to state vacuously, hard to state well |
+| Metamorphic | Two related runs relate as they should | Needs a relation you can name |
+| Differential | The new thing agrees with a reference | Inherits the reference's bugs |
+| Replay | The same inputs produced the same outputs | Consistency is not correctness |
+| Types and static analysis | A class of defect is absent | Absence of a class, not presence of intent |
+| A model as judge | A fast, cheap opinion | Not executable in section 8's sense |
+
+That last row is the tempting one and the most often misused. A model reviewing a
+diff is genuinely useful: good triage, catches things people skim past, costs
+almost nothing. It is not a gate. It is not reproducible, it can be talked out of
+its position by the thing it is reviewing, and a check that returns a different
+verdict on Tuesday is a notification with extra steps. Use it to decide what a
+person looks at. Do not use it to decide what merges.
+
+Three rules make the rest work.
+
+**An oracle the agent can edit is not an oracle.** Principle four, expressed in
+file permissions. During implementation the expectations are not writable. A
+change touching an implementation and its expectations in one commit is a review
+trigger by construction rather than by somebody's vigilance. Everything else in
+this section depends on this rule, and it is the one relaxed first, because
+relaxing it makes a red build go away.
+
+**Confirm red is how you test the oracle.** The discipline in section 15 usually
+gets read as a test-first rule. In harness terms it is more precise than that: it
+is the only cheap check that the oracle observes what it claims to observe. An
+expectation that passes before the implementation exists is not evidence, and the
+three explanations for it, that the behaviour already existed, that the test does
+not observe what it says, or that the specification describes the system wrongly,
+are all things worth learning before writing the code rather than after shipping
+it.
+
+**Assume the suite is decorative until something proves otherwise.** "Are these
+tests worth anything" has a mechanical answer: change a constant in the
+implementation and see whether anything goes red. Mutation testing automates
+exactly that, and it is the closest thing available to an oracle for your
+oracles. Expensive across a whole codebase, cheap across the twenty files
+implementing your ratified rules, which is the only place the answer matters.
+
+And the boundary, stated plainly, because a section on automatic validation that
+omits it is selling something. No oracle tells you whether the specification was
+right. None tells you whether an abstraction is the right size, which is why
+section 8's shape gates are questions put to a person rather than assertions run
+by a program. None tells you whether a legal requirement was read correctly. The
+harness's job with all three is not to decide them. It is to route them to
+whoever decides, while it is still cheap, and to refuse to close while they are
+open.
+
+### Building agentic flows
+
+The first question is the one people skip, because both answers get called the
+same thing in marketing material.
+
+> **Enumerate the decision points. If you can enumerate them, write a workflow.
+> If you cannot, you need an agent, and then you need to bound it.**
+
+A workflow's control flow is written by you and is inspectable before it runs. An
+agent's is decided at runtime, which buys adaptability and costs you the ability
+to know in advance what will happen. Most production systems described as agentic
+are workflows with one or two genuinely agentic steps inside them, and that is
+usually the right shape rather than an admission of timidity.
+
+Whichever you have, five rules keep it from decaying.
+
+**Phases are states, with entry and exit conditions.** Not stages on a diagram. A
+phase you can enter without meeting a condition is a label, and unless the exit
+condition is an oracle the phase does not end, it gets abandoned.
+
+**Handoffs carry artifacts, not conversation.** The next phase reads files. If it
+needs the previous phase's reasoning then that reasoning is an artifact now, and
+principle one applies. Passing a transcript forward feels like continuity and is
+how a flow acquires a dependency on a context window nobody controls.
+
+**Roles have different write permissions.** The proposer writes specifications,
+the implementer writes source, neither writes evidence. Justified twice over, as
+section 10 points out: context hygiene wants it and separation of duties requires
+it.
+
+**Human checkpoints are states, not interruptions.** Ratification is a phase in
+the table in section 15 for exactly this reason. A checkpoint modelled as an
+interruption gets optimised away as friction, because friction is what it looks
+like on a dashboard. A checkpoint modelled as a state has an entry condition, a
+queue and a latency, all of which can be measured and argued about.
+
+**Every loop needs a named exit that is not success.** Escalate, and say to whom,
+with what. A flow without one finds its own exits, and the ones it finds are
+exhausting the budget, exhausting the context, and declaring success. The third
+is the expensive one.
+
+Put together, that is what the phase table in section 15 is: a state machine
+whose state lives in files, whose transitions are guarded by oracles, and whose
+write permissions differ per phase. Written out as a harness specification, it
+looks like this.
+
+| Phase | Writable by the agent | Transition requires |
+|---|---|---|
+| Propose | Proposal drafts | Schema valid, cited IDs resolve |
+| Clarify | The question list | No blocking question unanswered |
+| Ratify | Nothing | A recorded human approval |
+| Evidence | Expectation drafts | Human approval of the expected result |
+| Confirm red | Nothing | The new evidence fails |
+| Implement | Source paths only | Build passes |
+| Verify | Source paths only | Every required row verified, CI green |
+| Integrate | Nothing | The closure formula evaluates true |
+
+The middle column carries the argument. Two phases where the agent writes nothing
+at all are what stop the loop being a closed circuit, and they are the first two
+to get quietly widened when a team is behind schedule.
+
+### What each gives the other
+
+This is not a relationship between a methodology and its tooling, and it reads
+better in both directions.
+
+**Specification work gives the harness what it cannot compute for itself:** an
+exit condition that means something, which is ratified obligations rather than
+the model's own sense of completion; a state model that is already designed,
+since the coverage matrix is the loop's state; a reason for the permission
+boundaries that is not paranoia; and a defined escalation trigger in the
+clarification marker.
+
+**The harness gives specification work the only thing that makes it real:** a
+gate needs something that actually runs, actually blocks, and cannot be bypassed,
+and all three are harness properties. Section 8 defines what a gate is. The
+harness is where "mandatory" stops being an adjective.
+
+Which is the sentence to take away from this section:
+
+> **A specification without a harness is a wish. A harness without a
+> specification is an efficient way to converge on nobody's intent.**
+
+---
+
+## 17. What to take away
+
+If you remember six things.
 
 1. **The conversation cannot be the only place the intent lives.** Anything that
    must outlive a session has to be a file in the repository.
@@ -1157,6 +1599,10 @@ If you remember five things.
 
 5. **The agent proposes, a person ratifies, a program checks.** No mechanism
    authorises a model to ratify its own output.
+
+6. **The harness is where "mandatory" becomes true.** Most of the distance
+   between a demonstration and a system is in the program around the model, and
+   almost none of that program is reviewed by anybody.
 
 And one thing to be suspicious of, including in this guide: none of this is
 demonstrated. Structure is cheap to add and its benefits are mostly costs
@@ -1206,6 +1652,16 @@ should be verified against the original before this guide is published anywhere.
   clarification markers, the templates-as-constraints idea, and the "power
   inversion" thesis this guide argues with in section 7.
 
+Two chapters are lighter on sources than the rest and it would be dishonest not
+to say which. Section 9 distils the sources above rather than adding to them: the
+mechanisms are theirs, the reduction to seven principles is mine, and anyone who
+would draw the line elsewhere is not obviously wrong. Section 16 is mostly
+practice. "Harness" is ordinary usage in the agent tooling community and the
+Ralph material supplies the state-on-disk argument, but the build order, the
+ordering of the error-reduction levers and the phase permission table are what
+has worked rather than what has been published, and they should be read at that
+weight.
+
 ---
 
 ## Open questions for the next revision
@@ -1219,7 +1675,7 @@ should be verified against the original before this guide is published anywhere.
   would age fastest, Böckeler's hands-on findings had already started
   contradicting parts of it, and a guide that ages badly in one section gets
   distrusted in all of them. What was worth keeping from it, the constitution as
-  an example of a tool arriving with opinions, moved into section 10.
+  an example of a tool arriving with opinions, moved into section 11.
 - The legal chapter needs a reader who does this for a living to disagree with
   it. It is written from the engineering side of a conversation that has two
   sides.
@@ -1233,3 +1689,19 @@ should be verified against the original before this guide is published anywhere.
 - The constitution idea deserves more than a paragraph inside a tool entry. If a
   project's non-negotiables belong in a file, the questions are who ratifies a
   change to it, and what makes it different from a style guide nobody follows.
+- The Spanish edition stands at version 0.3 and has neither section 9 nor
+  section 16. Either it gets translated or the two editions are different
+  guides, and carrying the divergence for another revision is how a translation
+  quietly becomes a fork.
+- Section 16 orders the error-reduction levers by return on effort. That
+  ordering is a judgement from practice and nothing here measures it. The claim
+  that the quality of error messages outranks prompt engineering is the most
+  testable assertion in this guide and the most embarrassing one to be wrong
+  about.
+- Mutation testing is recommended in section 16 as an oracle for the oracles,
+  over a subset of files. Nobody here has run it at that scope on a repository
+  whose tests were written by an agent, which is exactly the case it is being
+  recommended for.
+- Sections 9 and 16 push the guide past the length its subtitle promises. The
+  next revision should either drop "short" or drop a chapter, and the second is
+  the harder decision to make honestly about one's own writing.
