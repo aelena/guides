@@ -2,7 +2,7 @@
 
 ### A short guide to governing change when a model writes the code
 
-**Version 0.4 · Draft · September 2026**
+**Version 0.5 · Draft · September 2026**
 
 > This guide is a synthesis from multiple sources, not original research. 
 > Sources listed at the end. Where I disagree with a source I say so.
@@ -29,7 +29,7 @@ small for illustrative purposes and to avoid the inherent complexity in the fixt
 
 ## 1. The problem is not the conversation
 
-Simply and naively, ask a model for a promotion engine or a loyalty program and you will sure get one, derived from God knows where - which I call derivative, rather than generative, AI. Ask again for tiering and seasonal multipliers and you get those too. Nothing about that is inherently wrong but it is not complete, or the best, or what you or your customer really wanted or needed.
+Simply and naively, ask a model for a promotion engine or a loyalty program and you will surely get one, derived from God knows where - which I call derivative, rather than generative, AI. Ask again for tiering and seasonal multipliers and you get those too. Nothing about that is inherently wrong but it is not complete, or the best, or what you or your customer really wanted or needed.
 
 The problem is that the conversation is the only place the intent lives. And conversation is imprecise, ambiguous, it has low communication temperature and it is not an artifact.
 
@@ -348,6 +348,22 @@ checklist, and a checklist is a reminder. If your process treats a marked
 specification as ready to build from, you have added a syntax for recording
 uncertainty rather than a mechanism for resolving it.
 
+Two details from practice help the marker be a mechanism rather than a syntax.
+The first is Fontoura's: the state that unlocks the next phase lives in a
+separate one-line file that only a person writes, and the rule is flat: *file
+existence does not imply approval*. A design document on disk is not a green
+light; only the state token is. With that in place, an unresolved marker stops
+being a note and becomes the reason the token does not change. The second is
+cheaper still: before any code, ask the model to restate the rules in its own
+words. If it has misread FR-002, you find out now, at zero cost, rather than
+three sessions later.
+
+And one fact about how little is known here. SpecMine, Carnegie Mellon's census
+of 470,795 specification files on GitHub, counts clarification markers and
+unfilled placeholders as features of every document. It is the first time
+anyone can measure how many markers get resolved before code exists and how
+many just sit there. Nobody has published that number yet.
+
 ### The stable rules, once someone decides
 
 | ID | Rule |
@@ -407,6 +423,12 @@ and spec-as-source. That distinction is the most useful thing in the current
 literature and section 7 is built on it.
 
 **2026.** Preprints and tools proliferate. Treat them as signals, not consensus.
+
+**2026.** The first measurements arrive, pointing in two directions. A census of
+GitHub counts 470,795 specification files across 73,030 repositories, 99.7% of
+them created since 2025: the practice is a year old. And a study of 100,247
+pull requests finds none of the benefits the vendors advertise. Section 19 is
+about both.
 
 The pattern across the whole timeline is worth naming, because it predicts what
 happens next. Each of these arrived as a local answer to a local problem:
@@ -574,6 +596,18 @@ exists but is not required is a suggestion.
 
 Installing a validator does not create a gate. A green run on a laptop does not
 protect the main branch.
+
+Alenezi, in the most formal reference model published on this, describes the
+same boundary in a different vocabulary, and it is worth having because it
+makes explicit a claim that section 2 leaves implicit. In vibe coding,
+acceptance is *by observation*: you run the artifact on a handful of inputs and
+judge what you see. With a specification, acceptance is *by verification*: the
+artifact belongs to the set of things a deterministic validator accepts. And the
+validator has a property the generator does not: it is monotone. Strengthening
+any check shrinks what gets accepted without touching the model. Quality
+improvements compose through the deterministic boundary, not through
+retraining. That is section 16 in one sentence, and it is why this guide says so
+little about which model to use.
 
 ### The ratchet
 
@@ -855,6 +889,16 @@ agent the whole specification. Context engineering says hand it the identifiers
 and let it fetch what it needs, which is precisely what a repository organised
 around IDs and typed relations makes possible.
 
+The fashionable objection runs the other way: if the whole codebase fits in the
+window, why write a specification at all? Fontoura gives the short answer, and
+it is the right one. Context length and context precision are different
+problems. A million tokens of code tell the model what the system *is*. They say
+nothing about what it should *become*: the intent, the constraints, what is
+deliberately out of bounds. A bigger window makes the agent better informed
+about the present and no wiser about the target, and gives it more surface from
+which to copy the wrong precedent. Context makes the agent aware. The
+specification makes it aligned.
+
 There is also a convergence worth naming. Context engineering arrived at "move
 state out of the window and into files" because the window is scarce.
 Specification work arrives at the same place because the window is not
@@ -951,6 +995,14 @@ that operates before a mistake exists rather than after it. A team that writes i
 own templates is writing its own model behaviour, whether or not it thinks of the
 work that way.
 
+Palacio gives the category a name, and the name helps defend it against anyone
+who reads "documentation" and thinks of the Agile Manifesto. Until now a
+project's documentation came in two kinds: informative, so that a person can
+understand the system, or administrative, to satisfy a process. The
+specification an agent consumes is a third thing, *operative documentation*. It
+informs nobody about the software; it produces it. The manifesto's second value
+was written against the first two kinds, and this one did not exist in 2001.
+
 ### What happened when somebody tried it
 
 All of which is the theory. Böckeler worked through three of these toolkits by
@@ -968,6 +1020,17 @@ is in it. Böckeler's name for the resulting feeling is worth borrowing: a
 checklist-heavy workflow can create *the appearance of rigour without delivering
 any*, and appearance is more dangerous than absence because it stops people
 looking.
+
+There is also a measured reason why a longer template does not buy more
+compliance. The work on the *curse of instructions*, which Palacio's guide
+picks up, measured what happens when verifiable instructions are stacked into
+one prompt: the probability of satisfying all of them fits rather well to the
+probability of satisfying one, raised to the number of instructions. Ten rules
+at ninety percent reliability each and the set holds one time in three. The
+consequence for templates is direct: decompose rather than accumulate, and put
+first whatever must not fail. The consequence for section 16 is the same:
+instruction collision is not only a problem of contradiction, it is a problem of
+quantity.
 
 That does not make templates worthless. It makes them the cheap half of a pair.
 Everything they merely request, a gate has to require, and anything you cannot
@@ -1000,6 +1063,21 @@ afterwards, whether or not anybody read the file.
 The design decision worth stealing regardless is that several articles are left
 deliberately blank, for the project to fill with its own non-negotiables. A
 constitution that arrives fully written is somebody else's constitution.
+
+The word is already used for two things, and it helps to know which one you
+are hearing. In the Scrum Manager guide, the "project constitution" is the
+context file of section 4: conventions, stack, structure, what Spec Kit would
+call the project file. In Spec Kit it is numbered articles that every plan is
+checked against. Alenezi gives the second sense its exact place: in his model a
+specification has four components, and one of them is *constitutional
+constraints*, non-negotiable rules of security, privacy and regulation that the
+static analyser checks, not a person. That is the answer to the question the
+previous revision left open, what separates a constitution from a style guide
+nobody follows: something executes it. A constitution that only the model reads
+is a style guide by another name. One that a validator checks is an article of
+the gate. Marri reports a 73% reduction in security defects with that
+arrangement; it is a single project, with the same developer under both
+conditions, and section 19 says what weight to give it.
 
 So: read the ones you adopt. The three gates in section 8 and
 the articles above are not neutral scaffolding. They encode a specific view about
@@ -1194,6 +1272,15 @@ The same file serves four consumers: a person reading the body, an agent
 assembling context from the relations, a validator checking that the cited IDs
 exist, and Git keeping the rule together with its status and its history.
 
+Fontoura arrives at a similar partition from practice, and the convergence is
+the useful part. Three layers, each with a different lifespan: an entry file of
+under thirty lines that only routes, a directory of durable context that
+changes when an architectural decision is made, and a folder per feature with
+the change's documents and its state. Each layer fails without the other two.
+And a precedence rule that section 14 adopts: durable context does not silently
+override an approved specification; if they conflict, the agent stops and asks
+which of the two artifacts to update.
+
 The test of whether you have built this properly: **if you uninstall the note-taking
 app, does everything still work?** The artifacts should be readable as plain
 markdown, validatable by a script, versionable with Git and checkable in CI. If
@@ -1226,6 +1313,17 @@ That failure settles nothing. It reports that two layers stopped agreeing.
 Note what this does *not* require. It does not require a human to physically type
 every file. An agent can draft proposals, write requirements, and propose tests.
 What stays human is ratifying meaning. What stays mechanical is checking.
+
+Fontoura states this as the survival rule of the method, and it deserves the
+imperative: *never patch the code and leave the spec behind.* It is not only
+that the specification ages. It is that when the module is regenerated, the
+patch disappears and the bug comes back, because the constraint lived in your
+head and not in the document. His example is the one that best shows what a
+ratification is: a charge specification passed requirements review and reached
+design without the uniqueness constraint on the idempotency key. The design was
+coherent and it was wrong. A person reading the document caught it, not a
+check, and that is why ratification in section 15 is a phase and not a
+checkbox: it is a reading.
 
 ---
 
@@ -1274,6 +1372,16 @@ closed = every required row verified
 Note that the agent reports what it *believes* it addressed, and that claim never
 sets a row to verified. The distinction between a claim and a verdict is the
 thing being engineered.
+
+The "verified" row needs a format, or it becomes a claim under another name.
+The one Fontoura uses fits in five lines and is the one to insist on: the claim
+being checked, the command that ran, the exit code, a one-line summary, and the
+verdict. Three rules keep it honest. Verification scope is proportional to the
+claim: a narrow claim runs one test; "the feature is done" runs everything. If
+there is no command, say so: "verified manually in the browser, no automated
+test" is an honest report and "it works" is not. And no row closes on
+yesterday's evidence: the code has changed since, which is what the formula
+above means by "this exact commit".
 
 ---
 
@@ -1462,6 +1570,21 @@ its position by the thing it is reviewing, and a check that returns a different
 verdict on Tuesday is a notification with extra steps. Use it to decide what a
 person looks at. Do not use it to decide what merges.
 
+There is a stronger version of principle four that the table does not capture,
+and it is worth knowing even though almost nobody can afford it. Ryan describes
+StrongDM's arrangement, which has been producing software since 2024 with three
+engineers and nobody writing or reviewing code: the evaluation scenarios live
+*outside* the repository and the agent never sees them. It is not that it
+cannot edit the oracle; it does not know what the oracle contains, like a
+validation set a model has not seen during training. An agent that can read the
+tests can, under optimisation pressure and without any ill intent, write code
+that passes them without doing what they were meant to check. With a hidden
+oracle that route does not exist. The second component is what makes the first
+possible: behavioural replicas of every external service, so the agent develops
+against simulated environments and touches no real data. For most teams that is
+a direction, not a recipe. The minimum recipe remains the previous rule: the
+oracle is not writable while implementation is under way.
+
 Three rules make the rest work.
 
 **An oracle the agent can edit is not an oracle.** Principle four, expressed in
@@ -1530,12 +1653,19 @@ it.
 the table in section 15 for exactly this reason. A checkpoint modelled as an
 interruption gets optimised away as friction, because friction is what it looks
 like on a dashboard. A checkpoint modelled as a state has an entry condition, a
-queue and a latency, all of which can be measured and argued about.
+queue and a latency, all of which can be measured and argued about. Palacio
+gives the practical reason, which is approval fatigue: an agent that asks
+permission for every change produces dozens of interruptions per session, and
+people respond by approving without reading. Concentrating review at the gates
+between phases, where the information is worth most and correction costs
+least, is what lets the implementation phase run with little intervention.
 
 **Every loop needs a named exit that is not success.** Escalate, and say to whom,
 with what. A flow without one finds its own exits, and the ones it finds are
 exhausting the budget, exhausting the context, and declaring success. The third
-is the expensive one.
+is the expensive one. Alenezi states it as a property of the loop and the
+statement is the right one: exhausting the budget escalates to a person rather
+than silently lowering the bar.
 
 Put together, that is what the phase table in section 15 is: a state machine
 whose state lives in files, whose transitions are guarded by oracles, and whose
@@ -1557,6 +1687,20 @@ The middle column carries the argument. Two phases where the agent writes nothin
 at all are what stop the loop being a closed circuit, and they are the first two
 to get quietly widened when a team is behind schedule.
 
+Palacio expresses the same table from the agent's side, with three levels any
+project file can adopt as they stand: *always*, what gets done without asking,
+such as running the tests before a commit; *ask first*, what may be right but
+has impact, such as touching the schema, adding a dependency or changing the
+public API; and *never*, the red lines, such as committing secrets, deleting a
+failing test or stepping outside the task's scope. The useful part is not the
+examples, it is that the scheme separates autonomy from permission: the
+*always* level exists so the agent does not interrupt for every micro-decision,
+and the *never* level removes whole categories of error rather than detecting
+them. And it is a frame that moves: something goes from *ask first* to *always*
+once the team has watched the agent decide well in that area. The permissions
+in the table above are the same thing with one difference: the project file
+asks for it and the harness enforces it.
+
 ### What each gives the other
 
 This is not a relationship between a methodology and its tooling, and it reads
@@ -1574,6 +1718,15 @@ gate needs something that actually runs, actually blocks, and cannot be bypassed
 and all three are harness properties. Section 8 defines what a gate is. The
 harness is where "mandatory" stops being an adjective.
 
+And Alenezi's argument for putting human judgement upstream rather than
+downstream is the most forceful I know, because it appeals to arithmetic rather
+than to virtue. A person reviewing generated code at the speed it is generated
+is the bottleneck and the weakest link at once, and the second half is
+measured: people reviewing with an assistant beside them write less secure code
+and are more convinced of the opposite. The scarce resource goes where it has
+the most leverage, authoring the contract and handling escalations. The volume
+of checking is done by the validator.
+
 Which is the sentence to take away from this section:
 
 > **A specification without a harness is a wish. A harness without a
@@ -1581,9 +1734,424 @@ Which is the sentence to take away from this section:
 
 ---
 
-## 17. What to take away
+## 17. Where the specification comes from
 
-If you remember six things.
+The loop in section 15 begins at capture, with "the literal request".
+Everything after that takes it for granted that somebody wrote the sentence.
+Seyff and Glinz, in a 2026 position paper, point at what that assumption hides:
+the practice "is largely silent on where those specifications come from". The
+tooling assumes a developer writes them, alone with an assistant. The SpecMine
+census confirms the shape: the specification is written by a developer or, "more
+often", drafted by an AI tool and then touched up by the developer.
+
+Read that slowly, because it is the weakest part of the whole arrangement. The
+most important artifact in the process is drafted by the person with the least
+access to what the business wants, with the help of a model that has
+inclinations of its own. The earlier sections govern what happens to a
+specification once it exists. This one is about the two failures that happen
+before.
+
+### Disambiguating too early
+
+Seyff and Glinz put it in a sentence worth keeping: *premature disambiguation
+can be a defect rather than a virtue.* If the model resolves every
+underspecified element by guessing, it locks in interpretations that the
+stakeholders never had the chance to validate. Their rule for assistance in the
+early phase is that it should flag underspecification rather than resolve it
+silently: "this element appears in three places with different relations; is
+that intentional?".
+
+It is principle two seen from the other side. It is not enough that the
+artifact can say "I do not know"; the step that drafts it has to be allowed to
+leave things open, and a template that demands a value in every field takes
+that permission away. It connects to the cost section 3 called premature
+commitment, and to Hill's distinction that section 19 picks up: a specification
+written before anything has been validated is a guess with structure. For what
+you already understand, the order "specification first, then code" is right.
+For what you do not yet understand, the honest specification is written after
+the prototype and before the second version.
+
+### The drift towards the average system
+
+The second failure is subtler and has no name in the specification literature,
+though it has one in modelling. Language models carry strong priors towards the
+standard notations, UML, BPMN, entity-relationship diagrams, and more generally
+towards the most frequent shape of a problem. Seyff and Glinz call it
+homogenisation: without countermeasures, model-assisted projects drift towards
+the same handful of patterns. Translated to specifications, a draft written by a
+model drifts towards the average system, which is not yours. Their
+countermeasures are concrete: restrict retrieval to the session's context,
+penalise imported vocabulary, and an explicit "stay inside our language" mode.
+
+This guide's version is a reading test. The vocabulary of the specification has
+to be the business's. A draft that arrives with words nobody in the room uses is
+a draft that has imported another system, and the six questions in section 5
+get answered on their own, with somebody else's answers, without anyone
+noticing.
+
+### Three design rules that were already here under other names
+
+The authors propose principles for AI assistance in that phase, and three of
+them are things this guide holds from another angle, which suggests they are
+properties of the problem rather than of the tool.
+
+*Propose, never impose.* Every assignment, every structural change, is a
+suggestion the person accepts, modifies or rejects. It is "the agent proposes, a
+person ratifies" applied before a requirement exists.
+
+*Visible and reversible inferences.* Every inference the model makes is a
+first-class event in the model's history, and it can be undone. It is principle
+one applied to the drafter's decisions, not only to the business's.
+
+*Traceability of every inference to its origin.* Every proposed type, every
+inferred rule, has to point at the element it came from, and in practice that is
+enforced by requiring every proposal to cite at least one source element by
+identifier. This is the one the guide did not have as a check and should. In
+the repository of section 13, every requirement derives from an intent. A
+requirement whose `derives_from` is empty is a requirement the drafter invented,
+and a validator can refuse to ratify while one exists. It is a cheap check for
+the one class of invention section 5 cannot see: the kind that arrives already
+dressed as a rule.
+
+### The interview
+
+There is a more mundane technique that most teams can apply tomorrow, and
+Fontoura takes it from Anthropic's documentation: before writing anything, ask
+the model to interview you. Not the obvious questions; the hard parts you have
+not considered, edge cases, trade-offs, and only then write the specification.
+Then implement in a clean session, so the implementation follows the document
+and not the conversation that produced it.
+
+It is the clarify phase of section 15 run before the proposal rather than after,
+and it works for the same reason the marker does: it turns into questions what
+would otherwise be assumptions. With a limit that section 1 already noted: an
+interview produces answers at the speed a person can give them, in the heat of
+the moment. The marker preserves the option of not answering yet. A good
+interview ends with some questions unanswered, written down, and the state token
+unchanged.
+
+---
+
+## 18. When the spec has more than one reader
+
+Everything so far holds for one person and one agent. In a team the
+specification keeps that job and picks up two more, and missing that is how you
+end up with a folder of specifications nobody reads and a ritual nobody believes
+in.
+
+| The specification sits between | What it carries |
+|---|---|
+| A person and the agent | The only memory the agent has, and what bounds its drift |
+| One person and another | What a colleague reads instead of reading your mind |
+| One team and another | The contract at the boundary where two teams integrate |
+
+The trap is treating a team specification as a solo specification with more
+authors. You keep writing private notes, give them a shared folder and call it
+a practice. The notes still assume everything in your head. A colleague opens
+the file, hits the first implicit rule and guesses, which is exactly the
+problem specifications exist to kill. The test in section 3 applies as it is:
+your colleague and the agent have the same handicap, neither was in your head.
+
+### The argument moves to the cheapest layer
+
+The rule that turns a folder into a team practice is the one least often
+written down, and Fontoura writes it down: **the specification enters review
+before the code exists.** The requirements arrive as a pull request, somebody
+reads them, and only when they approve does the state change and design begin.
+The same for the design. The same for the tasks.
+
+A code review after implementation catches typos in a decision that was already
+wrong. A specification review catches the wrong decision before a line encodes
+it. The most expensive review a team does is the one afterwards, when the
+disagreement is about a finished thing.
+
+| Where the disagreement shows up | What it costs to resolve |
+|---|---|
+| In the requirements pull request | A comment thread, before any code exists |
+| In code review | Rewriting a feature that already works |
+| At integration, between teams | Two implementations that do not fit |
+| In production | An incident, and then all of the above |
+
+The value of the specification in a team is not documentation. It is moving the
+argument to the layer where having it costs least. A team with specifications
+does not disagree less. It disagrees earlier.
+
+### Reviewing a document is not reviewing code
+
+Palacio makes an observation that looks minor and is not: the gates before
+implementation review text, not code, and that changes who can take part and
+what is being asked. More people can read a specification than a diff: whoever
+knows the business can say whether the requirements are the right ones without
+being able to program. And the two questions that compete in a code review, "is
+this what we want?" and "is it well built?", come apart: the gates before answer
+the first, the verification after answers the second. Two focused reviews tire
+people less than one that tries to do both.
+
+On who approves, Palacio's answer is the right one: it depends on the team, and
+what matters is not the role but that approval is a deliberate, explicit act.
+Somebody reads the artifact, evaluates it against known criteria and decides
+whether it is enough to move on. Whoever knows the domain approves the
+requirements. Whoever knows the code approves the decomposition into tasks,
+which is the most technical gate and the one where developers are worth having.
+And somebody watches the gates themselves, so they are neither skipped under
+schedule pressure nor turned into a bottleneck because the approver is away.
+
+### The canon lives in the tool
+
+Solo, your conventions live in you. In a team, if they live only in heads, each
+developer drifts in their own direction and you end up with five dialects of
+specification that read nothing alike. The fix is principle seven in its
+organisational form: the canon goes where the tool reads it. The durable
+context of section 13 with the whole team as author and reader, the templates
+and skills that carry the format and the bar to everyone's machine, and the
+conventions written down: when a change needs a specification, what the format
+is, who approves each gate.
+
+This changes onboarding too. A new person reads the specifications and the
+durable context, not a wiki page and a colleague to ask. A convention that lives
+in the most senior person's memory scales to exactly the number of people that
+person can correct in person. One encoded in a file scales to everyone who runs
+the agent, including the agent.
+
+### The gate has to be physical
+
+Solo, you read the state token yourself. In a team, a gate that lives only in a
+file nobody opens is a gate that gets skipped, because most people cannot see
+it. Fontoura puts it on a board: one column per phase, one card per change, and
+the card moves when the gate is approved. Approving *is* the move. With one rule
+that stops the board becoming a second source of truth: Git holds the artifact
+and the board reflects the state; the card points at the specification, it does
+not copy it.
+
+And the gate gets muscle from what section 8 calls mandatory policy, now applied
+to people: branch protection refuses to merge without a review. The gate has to
+be physical, not a norm people remember on their good days.
+
+### The bottleneck moves
+
+The reason all of this pays for itself in a team has nothing to do with typing
+speed. Solo, your bottleneck was your own loop. In a team, generation gets cheap
+fast, because everyone has an agent, and the team can produce several times more
+code than before. What ships does not grow at the same rate, because the wall
+has moved: it is now in review, in deployment and in the coordination between
+people and teams. Fontoura puts it in a sentence that deserves the emphasis:
+**generation is cheap; integration is the job.**
+
+The one enterprise case Alenezi cites points the same way from the other side,
+with the caveat that it is a single case: one engineer with four specialised
+agents delivered an initiative sized for a four-person team, and the most
+consistent gain came not from generating faster but from collapsing the outer
+loop of coordination between disciplines, because a shared specification was
+the one referent everybody looked at. A board with a work-in-progress limit on
+the review column makes that wall visible: the cards pile up there, and no
+faster agent clears them.
+
+### How it fails in a team
+
+Palacio catalogues the ways this goes wrong while appearing to go well, and
+three are worth watching from the first month.
+
+**Specification theatre.** Specifications get written and gates get run, but
+the review is superficial and the signature is a formality. The cause is
+usually one of two: schedule pressure, or specifications so generic that
+reviewing them adds nothing. The answer is not more discipline; it is either
+better specifications or less process on the changes that do not need it.
+
+**Zombie documentation.** The project accumulates specifications nobody
+consults, nobody updates and nobody deletes. It is the anchored mode adopted
+without a maintenance process: rigour in the first cycle, abandonment in the
+next. Deciding consciously which specifications are kept and which are thrown
+away after implementation is part of the work, and a specification that is kept
+has an owner.
+
+**The specification as a control tool.** Every decision has to pass a gate and
+the builders' autonomy disappears. It confuses the structure of the process
+with control of the team. The *always* level in section 16 exists precisely so
+that routine decisions need no approval; if the team feels the gates limit it
+rather than support it, the calibration is wrong.
+
+---
+
+## 19. What the evidence says
+
+The previous revision of this guide ended with a warning: none of this is
+demonstrated. Since then somebody has measured it, and the result is not
+flattering. This section exists because a guide that argues for a practice owes
+its readers the best argument against it, and there is now one with data.
+
+### The study
+
+Hill, in a working paper from April 2026, analyses 100,247 merged pull requests
+across 119 open-source repositories. He derives five hypotheses from the
+vendors' literal claims, mostly Spec Kit's and Kiro's: that specifications
+reduce defects, that they reduce rework, that better specifications produce
+fewer defects and less rework, and that they constrain the scope of AI-generated
+code. He traces defects back to the commit that introduced them and compares
+each author with themselves, their changes with a specification against their
+changes without one, which is the most conservative design available for
+observational data.
+
+None of the five holds. Within author, changes with a specification carry more
+defects (1.4 points more, at the edge of significance) and more rework (5
+points more, with p below 0.001). Specification quality, scored on seven
+dimensions copied from the tools' own templates, has an effect on rework of
+exactly zero. And the scope-constraining effect on AI-tagged changes does not
+appear. Four robustness checks, with other outcome measures, with the classic
+defect-prediction features, dimension by dimension and at repository level, say
+the same. Adding "has a specification" to a defect-prediction model improves
+its fit by 0.000014.
+
+The author's reading is the one from medicine: confounding by indication. The
+hardest, largest, riskiest tasks are the ones that get a specification, and they
+are also the ones that produce the most defects, so the specification marks
+difficulty rather than reducing it.
+
+### What it does say, and what it does not
+
+The limits are listed by the study itself, and they are the ones an honest
+reader would note. It is all open source, in a convenience sample. The measure
+of "has a specification" is deliberately loose: a linked issue counts. Quality
+was scored by a language model. And most of the data predates agentic
+workflows: only 2,650 pull requests carry an AI tag, and among those the
+specification shows no effect in either direction; the subset closest to the
+workflow the tools sell, high-quality specifications on AI-assisted changes,
+gives 4.8 points fewer defects over 42 authors, which the author calls
+suggestive and not robust. So the best available evidence says the advertised
+benefit is not visible, it does not say the practice is useless, and it does
+not yet observe the workflow it is most aimed at.
+
+What the study does to the marketing claims is final, and what it does to this
+guide is different, and the two should be kept apart. The argument of section 1
+was never "fewer bugs". It was that somebody can answer, six weeks later, why
+the system does what it does and who agreed to it. Hill reaches the same place
+from the data: specifications "create value after code ships, not during
+generation", as an audit trail and as documentation that outlives whoever wrote
+it. And he adds the sentence that sums up better than anything in this guide why
+generation does not solve the problem: *the specification tells the AI what to
+build; it does not tell the AI what it forgot to specify.* The hard part is not
+solved, it is relocated.
+
+That this guide survives the study because it never promised what the study
+refutes is a defence, and also a weaker claim, and it should be stated as one:
+what is defended here is who answers for what and what can be reconstructed,
+not a defect rate.
+
+### The 50% chain
+
+One detail of the study this guide has to record, because it is its own warning
+about inherited citations coming true. Piskala claims that "controlled studies"
+show "error reductions of up to 50%". Hill followed the citation: it leads to a
+Red Hat developer blog post and an InfoQ article, and neither contains a study,
+an experiment or a number. It is practitioner opinion that acquired the look of
+evidence by being repeated. The sources section of this guide already warned
+that Piskala is a well-organised argument and not evidence; it is now also
+known that the one figure it gives is nobody's.
+
+### The numbers on the other side
+
+The favourable numbers exist and deserve the same lens. Alenezi's reference
+model carries in its abstract a 73% reduction in security defects under
+constitutional constraints and a 50% reduction in time to market. In the body
+of the paper the author himself classifies both as "unreplicated case
+evidence" on which "the argument does not rest its weight": one banking
+project with the same developer under both conditions, and one engineer with
+four agents at a Brazilian bank. Read the abstract and then that paragraph, and
+measure the distance. What the paper does have, and it is more useful than the
+figures, is an honest counterexample: a preregistered experiment by Borg and
+colleagues found no maintainability disadvantage in code developed with
+assistants where conventional review discipline was in place. Alenezi's reading
+is that the moderating variable is governance, not AI, and he marks it himself
+as a hypothesis consistent with the data rather than a finding.
+
+Fontoura contributes a practitioner case worth more for how he bounds it than
+for its figures: thirteen applications, three APIs, around 138,000 lines and
+1,650 tests, in seventy days, solo, over 28 specifications. The limits are his
+own: it does not generalise, because the method externalises expertise and does
+not manufacture it; speed was measured and quality was not audited; a deadline
+was doing real work; and it is one data point with no control. His conclusion
+is the right one: the method worked at that scale, once, for that operator.
+
+### The critics of the trade
+
+Two practitioner critiques circulate widely enough to cite. Scott Logic put
+Spec Kit through its paces and found it roughly ten times slower than iterative
+development, producing thousands of lines of markdown that still yielded buggy
+code; they called it "reinvented waterfall". Zaninotto, from Marmelab's
+production experience, writes that the practice shines when starting from
+scratch and that, as the application grows, the specifications "miss the point
+more often and slow development". Both are critiques of a tool's shape, one
+workflow for every size, which sections 3 and 11 already make, and Palacio's
+answer is proportionality: a one-line fix does not go through four phases. But
+they should not be dismissed that fast. What both describe, the relation between
+document volume and real change, is what Hill measures as rework, and it comes
+out in the same direction.
+
+### What is known about the problem, not the remedy
+
+There is a second body of data the sources cite often and which needs placing,
+because it is not about specifications but about AI assistance in general.
+METR, in 2025, measured sixteen experienced developers on their own
+repositories: with AI tools they took 19% longer and believed they had been 24%
+faster. The 2025 DORA report, as Fontoura relays it, found 98% more pull
+requests and 243% more incidents per pull request in teams using AI. Pearce and
+colleagues found vulnerabilities in around 40% of code generated in
+security-sensitive settings. This guide cites those three through other sources
+and says so in the sources section. They establish the problem solidly: the
+speed is real, the perception of speed is unreliable, and the failure rate rises
+faster than the throughput. They do not establish that specification is the
+remedy. That is what Hill went looking for and did not find.
+
+### What is known about the practice itself
+
+SpecMine, Carnegie Mellon's census from July 2026, is the first portrait of the
+practice at scale, and it says three things a reader should hold in mind when
+reading any claim about it. The practice is a year old: 99.7% of the 470,795
+specifications were created in 2025 or later. Most of it is scaffolding: of
+73,030 repositories, 923 have a hundred stars or more, and the census flags tiny
+files, unfilled markers and placeholder text as signs of templates nobody
+completed. And how a specification becomes code remains, in the authors' words,
+an open question: 81.2% of pull requests that touch a specification also touch
+code, but that is a heuristic, not an observation of the relation. The study to
+wait for is the one that crosses that census with outcomes: how many markers
+get resolved, how many specifications are abandoned halfway, and whether either
+predicts anything.
+
+### What to measure in your own team
+
+Since no study yet observes your workflow, the measurement that matters is
+yours. Palacio proposes a reasonable set, and this guide adopts it with one
+change of emphasis. Flow: the ratio of specification time to implementation
+time, the first-pass approval rate at each gate, and the deviation rate, how
+often the agent stepped outside the specification's parameters and somebody had
+to intervene. Outcome: first-pass quality, rework time and review time, which
+with a clear contract should fall because review is against the specification
+rather than against the reviewer's taste. And what not to measure: lines
+generated and number of specifications; more specifications is not better.
+
+The change of emphasis is this. The three outcome measures are exactly the ones
+Hill found pointing the wrong way in his sample. If they point the same way in
+yours, section 3 already said what follows: the structure has not earned its
+place, and no loyalty is owed to a practice that worsens the figures it promised
+to improve. What this guide asks you to measure in addition, and no study yet
+does, is what it defends: how long it takes somebody to answer, about a change
+from three months ago, what was decided, who approved it and what evidence
+holds it up. If that number does not fall either, there is no excuse.
+
+### The honest summary
+
+The benefits being sold are not the benefits that have been shown. Fewer
+defects and less rework have been looked for at scale and have not appeared.
+Memory, attributable decisions and evidence that falls out of the process have
+not been measured, and they are this guide's argument. And no study yet observes
+the workflow in which the specification is an agent's primary input, which is
+where the tools aim and where this guide lives. This section will age before
+any other, and it is the one to reread at every revision.
+
+---
+
+## 20. What to take away
+
+If you remember seven things.
 
 1. **The conversation cannot be the only place the intent lives.** Anything that
    must outlive a session has to be a file in the repository.
@@ -1604,11 +2172,18 @@ If you remember six things.
    between a demonstration and a system is in the program around the model, and
    almost none of that program is reviewed by anybody.
 
-And one thing to be suspicious of, including in this guide: none of this is
-demonstrated. Structure is cheap to add and its benefits are mostly costs
-avoided, which are invisible unless you measure them. If a team adds traceability
-and its defect rate and cycle time both get worse, the traceability has not
-earned its place. Worth measuring before believing.
+7. **The benefits being sold are not the ones that have been shown.** Fewer
+   defects and less rework have been looked for across a hundred thousand pull
+   requests and have not appeared. Memory, attributable decisions and evidence
+   that falls out of the process have not been measured, and they are this
+   guide's argument.
+
+And one thing to be suspicious of, including in this guide: structure is cheap
+to add and its benefits are mostly costs avoided, which are invisible unless you
+measure them. If a team adds traceability and its defect rate and cycle time
+both get worse, the traceability has not earned its place. Section 19 says what
+has been measured already and with what result. What remains to be measured is
+yours.
 
 ---
 
@@ -1640,7 +2215,9 @@ should be verified against the original before this guide is published anywhere.
   citing it as research would be a category error. It also, incidentally,
   attributes the martinfowler.com article to Fowler rather than to Böckeler and
   adopts her taxonomy without naming her, which is this guide's own warning about
-  inherited citations happening in front of us.
+  inherited citations happening in front of us. And its one figure, "controlled
+  studies" with error reductions "of up to 50%", leads to two blog posts with
+  no study behind them, as Hill documents.
 - Microsoft, *Spec-driven development and AI-native engineering*, developer blog,
   2026. The source of "translation loss" and of the decision versus
   implementation autonomy distinction. A vendor post: its three case studies
@@ -1651,27 +2228,84 @@ should be verified against the original before this guide is published anywhere.
   full; the source of the constitution, the pre-implementation gates, the
   clarification markers, the templates-as-constraints idea, and the "power
   inversion" thesis this guide argues with in section 7.
+- Brenn Hill, *Does Spec-Driven Development Reduce Defects? An Empirical Test of
+  Industry Claims Across 119 Open-Source Repositories*, working paper, SSRN,
+  April 2026. Read in full. The only measurement at scale that exists, and the
+  source of most of section 19. Its limits are listed by the author and this
+  guide repeats them: open source, a convenience sample, a loose measure of
+  "has a specification", quality scored by a model, and data that mostly
+  predates agentic workflows. The data and the code are published, which is
+  more than any other source on this list can say.
+- Mamdouh Alenezi, *Specification-Driven Development as the Foundation of
+  AI-Native Enterprise Software Engineering*, arXiv 2607.16680, July 2026. Read
+  in full. A formal reference model, the specification as a tuple of functional
+  obligations, quality thresholds, constitutional constraints and architectural
+  structure, with a stochastic generator inside a deterministic validator. The
+  source of "acceptance by observation versus acceptance by verification", of
+  the validator's monotonicity, and of the argument about where to put human
+  judgement. No data of its own; its corpus of 44 sources is verified one by
+  one, and its section 6.4 weighs the evidence with an honesty the paper's
+  abstract does not reflect.
+- Shyam Agarwal, Anmol Singhal, Travis Breaux and Bogdan Vasilescu, *SpecMine: A
+  Large-Scale Corpus of Spec-Driven Development Artifacts*, arXiv 2608.25202,
+  Carnegie Mellon, September 2026. Read in full. A dataset, not a result: the
+  census of the practice on GitHub, with counts of clarification markers and
+  unfilled placeholders per document. The source of section 19's figures on the
+  age and composition of the practice.
+- Norbert Seyff and Martin Glinz, *From Sketches to Specs: AI-Assisted
+  Lightweight Metamodeling for Spec-Driven Development*, position paper, MoDRE
+  2026. Read in full. The source of section 17: the observation that the
+  practice is silent about where specifications come from, premature
+  disambiguation as a defect, homogenisation towards standard notations, and
+  the design principles for assistance. No empirical evaluation, and they say
+  so.
+- Kevin Ryan, *Spec Driven Development: AI Native Software Engineering*, first
+  edition, 2026, early beta. Only the first chapter exists and it is the one
+  that was read. The source of Shapiro's five levels, of the StrongDM case with
+  its external scenarios and service replicas, and of the reading that the
+  bottleneck has moved. The METR and DORA figures this guide cites come through
+  him and Fontoura, not from the originals.
+- Juan Palacio, *SDD, Spec Driven Development: cuando el código es la
+  consecuencia*, Scrum Manager teaching guide, version 1.0, April 2026. Read in
+  full, in Spanish. Written with a model's assistance and says so. The source of
+  "operative documentation", of the curse of instructions, of the three levels
+  of boundaries, of approval fatigue, of the metrics table and of the
+  anti-patterns in section 18. Also the source that reads the waterfall
+  objection best. It uses "project constitution" for the context file, not in
+  Spec Kit's sense, and section 11 points that out.
+- Felipe Fontoura, *Spec-Driven Development: The Definitive Guide to Building
+  Software with AI Agents*, 2026. Read in full. The source of the one-line state
+  file and of "file existence does not imply approval", of the three context
+  layers, of "confirm before building", of the verification report format, of
+  the chapter on teams and of the thirteen-applications case, whose limits he
+  writes himself. A practitioner's book with a kit to sell, and still the most
+  careful of the practitioner sources in separating what it demonstrated from
+  what it believes.
+- François Zaninotto (Marmelab), *Spec-Driven Development: The Waterfall Strikes
+  Back*, November 2025, and Scott Logic, *Putting Spec Kit Through Its Paces*,
+  November 2025. Cited through Hill and Palacio, not read in the original. They
+  are the two practitioner critiques section 19 records.
 
-Two chapters are lighter on sources than the rest and it would be dishonest not
-to say which. Section 9 distils the sources above rather than adding to them: the
-mechanisms are theirs, the reduction to seven principles is mine, and anyone who
-would draw the line elsewhere is not obviously wrong. Section 16 is mostly
-practice. "Harness" is ordinary usage in the agent tooling community and the
-Ralph material supplies the state-on-disk argument, but the build order, the
+Three chapters are lighter on sources than the rest and it would be dishonest
+not to say which. Section 9 distils the sources above rather than adding to
+them: the mechanisms are theirs, the reduction to seven principles is mine, and
+anyone who would draw the line elsewhere is not obviously wrong. Section 16 is
+mostly practice. "Harness" is ordinary usage in the agent tooling community and
+the Ralph material supplies the state-on-disk argument, but the build order, the
 ordering of the error-reduction levers and the phase permission table are what
 has worked rather than what has been published, and they should be read at that
-weight.
+weight. And section 19 is the one that depends most on a single study, which
+has not yet been through peer review.
 
 ---
 
 ## Open questions for the next revision
 
 - Verify every citation above. Inherited citations are how errors propagate, and
-  the Piskala entry now contains a worked example of it.
-- The guide now has three sources arguing for the practice and one arguing with
-  it. That ratio flatters the practice. Find the best available argument that
-  this is a fashion, and answer it or concede it.
-- The tool comparison is gone, as of this revision. It was the section that
+  the Piskala entry now contains two worked examples of it. In particular, read
+  METR, DORA and Pearce in the original before section 19 cites them as if we
+  had.
+- The tool comparison is gone, as of revision 0.4. It was the section that
   would age fastest, Böckeler's hands-on findings had already started
   contradicting parts of it, and a guide that ages badly in one section gets
   distrusted in all of them. What was worth keeping from it, the constitution as
@@ -1679,20 +2313,22 @@ weight.
 - The legal chapter needs a reader who does this for a living to disagree with
   it. It is written from the engineering side of a conversation that has two
   sides.
-- Add one worked example end to end, in full, rather than in fragments.
-- Consider a short section on cost: structure is not free, and the honest case
-  for it has to include the token and time overhead. Spec Kit's own comparison,
-  roughly twelve hours of documentation work against fifteen minutes of
-  commands, is the claim that section would have to engage with. It is not
-  obviously wrong and it is not measuring the same thing on both sides: the
-  fifteen minutes buys artifacts nobody has read yet.
-- The constitution idea deserves more than a paragraph inside a tool entry. If a
-  project's non-negotiables belong in a file, the questions are who ratifies a
-  change to it, and what makes it different from a style guide nobody follows.
-- The Spanish edition stands at version 0.3 and has neither section 9 nor
-  section 16. Either it gets translated or the two editions are different
-  guides, and carrying the divergence for another revision is how a translation
-  quietly becomes a fork.
+- Add one worked example end to end, in full, rather than in fragments. Fontoura
+  shows how it is done: five complete specifications for one product, every
+  requirement traced to a design decision and to a task with a verification
+  command. The points promotion in this guide could get the same treatment in an
+  appendix.
+- Section 19 answers the previous revision's question about the best argument
+  against, and section 3 still treats cost only qualitatively. Spec Kit's own
+  comparison, roughly twelve hours of documentation work against fifteen minutes
+  of commands, and Scott Logic's "ten times slower" are the figures a cost
+  section would have to engage with.
+- The constitution question is half answered in section 11: it differs from a
+  style guide when a validator executes it. The other half remains, who ratifies
+  a change to it and by what procedure.
+- Section 17 proposes a new check, refusing to ratify a requirement with no
+  origin, and nobody has run it. It is cheap to try on a real repository and
+  should be tried before it is recommended with more conviction.
 - Section 16 orders the error-reduction levers by return on effort. That
   ordering is a judgement from practice and nothing here measures it. The claim
   that the quality of error messages outranks prompt engineering is the most
@@ -1702,6 +2338,10 @@ weight.
   over a subset of files. Nobody here has run it at that scope on a repository
   whose tests were written by an agent, which is exactly the case it is being
   recommended for.
-- Sections 9 and 16 push the guide past the length its subtitle promises. The
-  next revision should either drop "short" or drop a chapter, and the second is
-  the harder decision to make honestly about one's own writing.
+- The guide now has twenty sections and the subtitle promises "short". Sections
+  9, 16, 17, 18 and 19 have pushed it well past what it promises. The next
+  revision should either drop "short" or drop chapters, and the second is the
+  harder decision to make honestly about one's own writing.
+- Section 19 will age before any other. Hill is a working paper, SpecMine is a
+  dataset somebody will mine soon, and replications of the favourable cases will
+  arrive or not. Reread it at every revision.

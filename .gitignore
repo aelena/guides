@@ -7,3 +7,10 @@ __pycache__/
 # employer's name and name colleagues, so they stay out of version control even
 # though the folder is useful to keep on disk as reference.
 _previous originals/
+
+# Reading material for the guides: third-party PDFs and books, some under
+# licences that do not permit redistribution. Kept on disk, never committed.
+sources/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/

@@ -2,7 +2,7 @@
 
 ### Una guía breve para gobernar el cambio cuando el código lo escribe un modelo
 
-**Versión 0.3 · Borrador · agosto de 2026**
+**Versión 0.5 · Borrador · septiembre de 2026**
 
 > Esta guía es una síntesis de varias fuentes, no investigación original.
 > Las fuentes están al final. Donde discrepo de una fuente, lo digo.
@@ -282,7 +282,7 @@ Un fichero markdown en la raíz del repositorio que hace de memoria del proyecto
 convenciones, estructura, reglas, prohibiciones, los comandos que importan.
 `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, el nombre varía.
 
-Funciona mejor cuando contiene reglas cortas, locales y accionables. Funciona mal
+Funciona mejor cuando contiene reglas cortas, locales y que se puedan aplicar. Funciona mal
 como almacén de todo, porque uno grande infla el contexto, acumula
 contradicciones y deja de estar claro qué artefacto tiene autoridad.
 
@@ -373,6 +373,23 @@ comprobación, y una lista de comprobación es un recordatorio. Si tu proceso tr
 una especificación marcada como lista para construir sobre ella, has añadido una
 sintaxis para registrar incertidumbre, no un mecanismo para resolverla.
 
+Dos detalles de la práctica ayudan a que el marcador sea mecanismo y no
+sintaxis. El primero es de Fontoura: el estado que desbloquea la fase siguiente
+vive en un fichero aparte, de una sola línea, que solo escribe una persona, y
+la regla es plana: *que el fichero exista no implica aprobación*. Un documento
+de diseño en disco no es luz verde; solo lo es el token de estado. Con eso, un
+marcador sin resolver deja de ser una nota y pasa a ser la razón por la que el
+token no cambia. El segundo es más barato todavía: antes de escribir código,
+pídele al modelo que reformule las reglas con sus propias palabras. Si ha leído
+mal la FR-002, te enteras ahora, a coste cero, y no tres sesiones después.
+
+Y un dato sobre lo poco que se sabe de esto. SpecMine, el censo de la Carnegie
+Mellon sobre 470.795 ficheros de especificación en GitHub, cuenta los
+marcadores de clarificación y los huecos sin rellenar como rasgos de cada
+documento. Es la primera vez que alguien puede medir cuántos marcadores se
+resuelven antes de que exista el código y cuántos se quedan ahí. Nadie ha
+publicado todavía esa cifra.
+
 ### Las reglas estables, una vez que alguien decide
 
 | ID | Regla |
@@ -436,6 +453,12 @@ sección 7 se construye sobre ella.
 
 **2026.** Los preprints y las herramientas proliferan. Trátalos como señales, no
 como consenso.
+
+**2026.** Llegan las primeras mediciones, en dos direcciones. Un censo de GitHub
+cuenta 470.795 ficheros de especificación en 73.030 repositorios, el 99,7 %
+creados desde 2025: la práctica tiene un año. Y un estudio sobre 100.247 pull
+requests no encuentra ninguno de los beneficios que anuncian los fabricantes.
+La sección 19 trata de los dos.
 
 El patrón de toda la cronología merece nombrarse, porque predice lo que viene
 después. Cada una de estas cosas llegó como respuesta local a un problema local:
@@ -616,6 +639,18 @@ notificación.
 Instalar un validador no crea una puerta. Una ejecución en verde en un portátil no
 protege la rama principal.
 
+Alenezi, en el modelo de referencia más formal que se ha publicado sobre esto,
+describe la misma frontera con otro vocabulario, y merece tenerlo porque hace
+explícita una afirmación que la sección 2 deja implícita. En el vibe coding la
+aceptación es *por observación*: se ejecuta el artefacto sobre unas cuantas
+entradas y se juzga lo que se ve. Con especificación la aceptación es *por
+verificación*: el artefacto pertenece al conjunto de lo que un validador
+determinista acepta. Y el validador tiene una propiedad que el generador no
+tiene: es monótono. Endurecer cualquier comprobación estrecha lo que se acepta
+sin tocar el modelo. Las mejoras de calidad se componen a través de la frontera
+determinista, no a través del reentrenamiento. Eso es la sección 16 en una
+frase, y es la razón de que esta guía hable tan poco de qué modelo usar.
+
 ### El trinquete
 
 La imagen mental útil es un trinquete: deja que la carga avance y no deja que se
@@ -700,7 +735,152 @@ existe porque alguien tiene que seguir respondiendo por el resultado.
 
 ---
 
-## 9. Las capas adyacentes
+## 9. Los principios de fondo
+
+Todo lo anterior han sido mecanismos: marcadores de clarificación, trinquetes,
+puertas de control, tres posiciones en un espectro. Los mecanismos caducan. Las
+herramientas que los llevan dentro habrán cambiado dos veces antes de que acabe
+la década, y una guía que no es más que un inventario de la práctica actual
+envejece hasta convertirse en pieza de museo.
+
+Así que merece la pena separar los mecanismos de aquello que los genera. Lo que
+sigue son siete principios de los que el resto de esta guía es un caso
+particular. Ninguno menciona una herramienta, y ninguno deja de ser cierto si los
+modelos se vuelven el doble de buenos. Quédate con estos y pierde todas las
+herramientas que se nombran aquí, y podrás reconstruir la práctica. Quédate con
+todas las herramientas y pierde estos, y tendrás la apariencia de rigor de la que
+las secciones anteriores no dejan de avisar.
+
+### Uno: la intención tiene que ser un artefacto, no un acontecimiento
+
+Una conversación es un acontecimiento. Ocurre, termina, y lo que resolvió
+sobrevive solo en lo que alguien acertó a escribir después. Un artefacto
+persiste, tiene una dirección, se puede citar en una discusión, y lo puede
+contradecir una persona que no estaba en la sala.
+
+*Genera:* el repositorio de la sección 13, la insistencia en que un historial de
+chat no es una especificación, y la mayor parte de la sección 1.
+
+*Lo que cuesta:* escribir las cosas, y la disciplina de hacerlo en el momento en
+que se toma la decisión y no en el momento en que alguien pregunta.
+
+### Dos: un sistema que no puede registrar incertidumbre fabricará certeza
+
+Es la generalización de `[NEEDS CLARIFICATION]`, y no es un hecho sobre los
+modelos. Cualquier proceso cuyo formato de salida no tiene una casilla para "sin
+decidir" produce documentos sin partes sin decidir, porque el formato exige una
+respuesta y alguien, o algo, la pone. Los modelos lo hacen rápido y visible. No
+lo inventaron: un documento de requisitos sin apartado de preguntas abiertas no
+ha significado nunca, en toda la historia de la práctica, que no las hubiera.
+
+*Genera:* los marcadores de clarificación, la pregunta bloqueante de la fase de
+clarificación, la fila `pending` de la matriz de cobertura.
+
+*La prueba:* ¿puede tu artefacto decir "no lo sé", y hay algo aguas abajo que se
+niegue a moverse mientras lo diga?
+
+### Tres: la autoridad va con las decisiones ratificadas, no con los formatos
+
+Ningún documento es normativo por dónde vive ni por cómo se llama. Es normativo
+porque alguien con la potestad de decidir lo ha ratificado y la ratificación
+está registrada. Por eso la sección 14 se niega a dejar que un test gane una
+discusión por el hecho de ser ejecutable, y por eso una página de wiki puede ser
+autoritativa mientras un fichero YAML es un rumor.
+
+*Genera:* el paso de ratificación, los registros de decisión, las reglas de
+conflicto.
+
+*Dónde se equivocan los equipos:* instalan un formato y creen que la autoridad
+ha venido con él.
+
+### Cuatro: quien hace el trabajo no puede ser dueño del oráculo
+
+La única propiedad estructural que separa un trinquete de un ritual. Si el
+mismo actor puede producir la implementación y ajustar la cosa que la juzga, el
+juicio no lleva información, y da igual que ese actor sea un modelo o una
+persona con prisa un viernes.
+
+*Genera:* el punto tres del trinquete, la tabla de separación de la sección 8,
+los límites de permisos de la sección 16.
+
+*Fíjate en lo general que es:* es la idea más vieja de la guía. La contabilidad
+por partida doble, la revisión por pares y la separación de poderes son el mismo
+principio, y ninguna se diseñó pensando en software.
+
+### Cinco: el cierre se calcula, no se declara
+
+"Terminado" es una afirmación. El cierre es un veredicto, derivado de
+condiciones que un programa puede evaluar. La distinción sobrevive a cualquier
+mejora de quien hace la afirmación, porque el problema nunca fue que quien
+afirma sea poco fiable. Es que una afirmación y un veredicto son cosas de clases
+distintas.
+
+*Genera:* la fórmula de cierre de la sección 15, la puerta de control, confirmar
+el rojo.
+
+*El corolario que la gente se salta:* si no lo puedes calcular, no has definido
+"terminado". Has descrito una sensación sobre lo terminado.
+
+### Seis: usa el mínimo rigor que elimine la ambigüedad
+
+La regla de Piskala, ascendida aquí a principio porque es la que impide que los
+otros seis hagan metástasis. El rigor es un coste que se paga para eliminar una
+ambigüedad concreta. Donde no hay ambigüedad no hay nada que comprar, y el fallo
+por ceremonia de la sección 3 es lo que pasa cuando un equipo olvida el "mínimo"
+y se queda con el "rigor".
+
+*Genera:* el espectro de la sección 7, y el permiso para no hacer casi nada de
+esto en la mayoría de los cambios.
+
+*Su enemigo:* es el único principio de la lista que no se puede imponer
+mecánicamente, porque una puerta que comprueba si tienes demasiadas puertas es
+un chiste con coste de mantenimiento.
+
+### Siete: los artefactos son el prompt
+
+Todo lo que escribes lo lee la cosa que escribe el código. Los encabezados
+deciden sobre qué se piensa, el orden decide sobre qué se piensa primero, y las
+prohibiciones son la única parte del proceso que actúa antes de que exista el
+error. La sección 11 lo desarrolla; como principio significa algo incómodo, y es
+que tus plantillas son comportamiento del modelo y tus documentos de proceso son
+ejecutables, tanto si los pensaste así como si no.
+
+*Genera:* las plantillas como restricciones, la constitución, toda la sección
+11.
+
+*La trampa:* un prompt es una petición. En la sección 11 también se dice eso.
+
+### Los principios no son todos compatibles
+
+Una lista de principios que nunca entran en conflicto es una lista que nadie ha
+usado. Dos tensiones merecen nombrarse, porque te encuentras con las dos en el
+primer mes.
+
+**Uno contra seis.** Toda decisión merece un artefacto, y la mayoría de las
+decisiones no merecen el artefacto. No hay fórmula que lo resuelva, solo la
+prueba de la sección 3: ¿va a tener que cambiar esto alguien que no lo escribió?
+
+**Tres contra cinco.** La autoridad es humana y el cierre es mecánico, así que
+siempre hay una franja de cosas que una persona ha ratificado y ningún programa
+puede comprobar. La respuesta honesta es hacer esa franja visible en vez de
+fingir que está vacía. Un requisito sin oráculo calculable no es un requisito
+defectuoso, es un requisito cuya verificación es una persona, y la fila debería
+decirlo en vez de quedarse en `pending` para siempre con aspecto de
+automatización sin terminar.
+
+| Principio | Mecanismo que genera | Lo que tienes sin él |
+|---|---|---|
+| La intención es un artefacto | El repositorio, el registro del cambio | Arqueología |
+| La incertidumbre se puede representar | Marcadores de clarificación, filas `pending` | Conjeturas seguras, invisibles |
+| La autoridad se ratifica, no se formatea | La ratificación, las reglas de conflicto | Gana quien editó el último |
+| Quien trabaja no es dueño del oráculo | El trinquete, los límites de permisos | Una build en verde que no significa nada |
+| El cierre se calcula | La fórmula de cierre, la puerta | "Terminado" como estado de ánimo |
+| Rigor mínimo | El espectro | Ceremonia |
+| Los artefactos son el prompt | Las plantillas, la constitución | Las opiniones de otro, impuestas en silencio |
+
+---
+
+## 10. Las capas adyacentes
 
 El desarrollo dirigido por especificación se encuentra normalmente junto a otros
 tres o cuatro nombres, y conviene tener claro cómo se relacionan, porque se
@@ -765,6 +945,16 @@ des los identificadores y le dejes traer lo que necesite, que es precisamente lo
 que hace posible un repositorio organizado en torno a identificadores y relaciones
 tipadas.
 
+La objeción de moda va en la dirección contraria: si el código entero cabe en
+la ventana, ¿para qué escribir una especificación? Fontoura da la respuesta
+corta, y es la buena. La longitud del contexto y la precisión del contexto son
+problemas distintos. Un millón de tokens de código le dicen al modelo lo que el
+sistema *es*. No le dicen nada de lo que debería *ser*: la intención, las
+restricciones, lo que queda fuera a propósito. Una ventana más grande hace al
+agente más informado sobre el presente y no más sabio sobre el objetivo, y le
+da más superficie de la que copiar el precedente equivocado. El contexto hace
+al agente consciente. La especificación lo alinea.
+
 Hay además una convergencia que merece nombrarse. La ingeniería de contexto llegó
 a "saca el estado de la ventana y ponlo en ficheros" porque la ventana es escasa.
 El trabajo de especificación llega al mismo sitio porque la ventana no es
@@ -789,7 +979,7 @@ contra las mismas instrucciones, y deja que relea el estado del sistema de
 ficheros cada vez. Como el estado está en disco y no en el arnés, el bucle
 sobrevive al agotamiento del contexto, a un cuelgue y a una sesión perdida.
 
-Una máquina de fases del tipo que describe la sección 14 es un bucle *listo*, y
+Una máquina de fases del tipo que describe la sección 15 es un bucle *listo*, y
 los bucles listos guardan estado. La lectura de Ralph sugiere que las fases
 deberían poder reconstruirse desde disco en vez de vivir en la memoria de un
 orquestador, y que un punto de control local no es una ejecución duradera. Es una
@@ -824,7 +1014,8 @@ reintentos. Aquí solo es relevante el segundo.
 
 Presentar las cinco como campos con nombre propio sería afirmar demasiado.
 Presentarlas como capas, cada una con su unidad de interés y su punto ciego
-característico, es defendible y más útil.
+característico, es defendible y más útil. La casilla de la tercera fila, el
+arnés, es a la que esta guía vuelve: la sección 16 trata de construirlo.
 
 La razón de que esta sección vaya antes de las herramientas es que explica qué
 esperar de ellas. La mayoría de las herramientas de este espacio son fuertes en
@@ -833,7 +1024,7 @@ vive la autoridad, porque la autoridad no es una funcionalidad.
 
 ---
 
-## 10. La plantilla es un prompt
+## 11. La plantilla es un prompt
 
 Esta es la idea de las herramientas actuales que se transfiere mejor, y es fácil
 que se te pase porque llega con aspecto de papeleo.
@@ -864,6 +1055,15 @@ parte de todo el proceso que opera antes de que exista un error y no después. U
 equipo que escribe sus propias plantillas está escribiendo el comportamiento de su
 modelo, lo piense así o no.
 
+Palacio le pone nombre a la categoría, y el nombre ayuda a defenderla ante quien
+lee "documentación" y piensa en el Manifiesto Ágil. Hasta ahora la
+documentación de un proyecto era de dos clases: informativa, para que una
+persona entienda el sistema, o administrativa, para satisfacer un proceso. La
+especificación que consume un agente es una tercera cosa, *documentación
+operativa*. No informa a nadie sobre el software; lo produce. El segundo valor
+del Manifiesto se escribió contra las dos primeras clases, y esta, en 2001, no
+existía.
+
 ### Qué pasó cuando alguien lo probó
 
 Todo eso es la teoría. Böckeler recorrió tres de estos kits a mano y encontró que
@@ -883,6 +1083,17 @@ sensación resultante merece tomarse prestado: un flujo de trabajo cargado de
 listas de comprobación puede crear *la apariencia de rigor sin aportar ninguno*, y
 la apariencia es más peligrosa que la ausencia, porque hace que la gente deje de
 mirar.
+
+Hay además una razón medida para que una plantilla más larga no compre más
+cumplimiento. El trabajo sobre la *maldición de las instrucciones*, que Palacio
+recoge en su guía, midió lo que pasa cuando se apilan instrucciones verificables
+en un mismo prompt: la probabilidad de cumplirlas todas se ajusta bastante bien
+a la probabilidad de cumplir una sola elevada al número de instrucciones. Con
+diez reglas y un noventa por ciento de fiabilidad por regla, el conjunto se
+cumple una de cada tres veces. La consecuencia para las plantillas es directa:
+descomponer en vez de acumular, y poner primero lo que no puede fallar. La
+consecuencia para la sección 16 es la misma: la colisión de instrucciones no es
+solo un problema de contradicción, es un problema de cantidad.
 
 Eso no vuelve inútiles a las plantillas. Las convierte en la mitad barata de una
 pareja. Todo lo que ellas solo piden, una puerta tiene que exigirlo, y cualquier
@@ -917,14 +1128,30 @@ se dejan deliberadamente en blanco, para que el proyecto los rellene con sus
 propias líneas rojas. Una constitución que llega escrita del todo es la
 constitución de otro.
 
-Así que lee las que adoptes. Las tres puertas de la sección anterior y los
+La palabra, además, ya se usa para dos cosas, y conviene saber cuál se está
+oyendo. En la guía de Scrum Manager, "constitución del proyecto" es el fichero
+de contexto de la sección 4: convenciones, stack, estructura, lo que en Spec Kit
+sería el fichero de proyecto. En Spec Kit son artículos numerados contra los que
+se comprueba cada plan. Alenezi le da a la segunda acepción su sitio exacto: en
+su modelo, una especificación tiene cuatro componentes, y uno de ellos son las
+*restricciones constitucionales*, reglas no negociables de seguridad, privacidad
+y regulación que comprueba el analizador estático, no una persona. Esa es la
+respuesta a la pregunta que quedó abierta en la revisión anterior, qué
+distingue una constitución de una guía de estilo que nadie sigue: que algo la
+ejecuta. Una constitución que solo lee el modelo es una guía de estilo con otro
+nombre. Una que comprueba un validador es un artículo de la puerta de control.
+Marri publica una reducción del 73 % en defectos de seguridad con ese montaje;
+es un solo proyecto, con el mismo desarrollador en las dos condiciones, y la
+sección 19 dice qué peso darle.
+
+Así que lee las que adoptes. Las tres puertas de la sección 8 y los
 artículos de arriba no son andamiaje neutral. Codifican una visión concreta sobre
 estructura de proyecto, abstracción y testing, y las partes que estén equivocadas
 para ti se van a aplicar en silencio todo el tiempo que nadie se dé cuenta.
 
 ---
 
-## 11. Cómo se sirven de esto los requisitos legales
+## 12. Cómo se sirven de esto los requisitos legales
 
 Las restricciones legales y éticas son la clase de requisito más desatendida del
 software, y la que casualmente encaja mejor con esta maquinaria. Las dos mitades de
@@ -1056,7 +1283,7 @@ antes en vez de después.
 
 ---
 
-## 12. Un repositorio, cuatro representaciones
+## 13. Un repositorio, cuatro representaciones
 
 Si las especificaciones van a ser normativas, necesitan vivir en algún sitio que no
 sea una wiki. El montaje que aguanta son ficheros planos en el mismo repositorio
@@ -1118,6 +1345,15 @@ agente que monta contexto a partir de las relaciones, un validador que comprueba
 que los identificadores citados existen, y Git manteniendo la regla junto con su
 estado y su historia.
 
+Fontoura llega a una partición parecida desde la práctica, y la coincidencia es
+la parte útil. Tres capas, cada una con una vida distinta: un fichero de entrada
+de menos de treinta líneas que solo enruta, un directorio de contexto duradero
+que cambia cuando se toma una decisión de arquitectura, y una carpeta por
+funcionalidad con los documentos del cambio y su estado. Cada capa falla sin las
+otras dos. Y una regla de precedencia que la sección 14 hace suya: el contexto
+duradero no sobrescribe en silencio una especificación aprobada; si chocan, el
+agente para y pregunta cuál de los dos artefactos hay que actualizar.
+
 La prueba de si has construido esto bien: **si desinstalas la aplicación de notas,
 ¿sigue funcionando todo?** Los artefactos deberían ser legibles como markdown
 plano, validables por un script, versionables con Git y comprobables en
@@ -1126,7 +1362,7 @@ extra.
 
 ---
 
-## 13. Cuando los artefactos no coinciden
+## 14. Cuando los artefactos no coinciden
 
 Van a no coincidir. La regla es que ningún artefacto gana por su formato. Gana la
 decisión ratificada en vigor.
@@ -1153,9 +1389,20 @@ fichero. Un agente puede redactar propuestas, escribir requisitos y proponer tes
 Lo que sigue siendo humano es ratificar el significado. Lo que sigue siendo
 mecánico es comprobar.
 
+Fontoura lo enuncia como regla de supervivencia del método, y merece la forma
+imperativa: *nunca parchees el código y dejes atrás la especificación.* No es
+solo que la especificación envejezca. Es que, si el módulo se regenera, el
+parche desaparece y el error vuelve, porque la restricción vivía en tu cabeza y
+no en el documento. El ejemplo que da es el que mejor enseña lo que es una
+ratificación: una especificación de cobros pasó la revisión de requisitos y
+llegó al diseño sin la restricción de unicidad sobre la clave de idempotencia.
+El diseño era coherente y estaba mal. Lo atrapó una persona leyendo el
+documento, no una comprobación, y ese es el sentido de que la ratificación de
+la sección 15 sea una fase y no una casilla: es una lectura.
+
 ---
 
-## 14. El bucle
+## 15. El bucle
 
 Juntándolo todo, un cambio pasa por fases. Son estados internos, no once
 pantallas.
@@ -1202,11 +1449,829 @@ Fíjate en que el agente informa de lo que *cree* haber atendido, y esa afirmaci
 nunca pone una fila en verificada. La distinción entre una afirmación y un
 veredicto es justo lo que se está diseñando.
 
+La fila "verificada" necesita un formato, o vuelve a ser una afirmación con otro
+nombre. El que usa Fontoura cabe en cinco líneas y es el que hay que exigir: la
+afirmación que se comprueba, el comando que se ejecutó, el código de salida, un
+resumen de una línea y el veredicto. Tres reglas lo mantienen honesto. El
+alcance de la verificación es proporcional a la afirmación: una afirmación
+estrecha ejecuta un test; "la funcionalidad está terminada" ejecuta todo. Si no
+hay comando, se dice: "verificado a mano en el navegador, sin test
+automatizado" es un informe honesto y "funciona" no lo es. Y ninguna fila se
+cierra con evidencia de ayer: el código ha cambiado desde entonces, que es lo
+que la fórmula de arriba quiere decir con "sobre este commit exacto".
+
 ---
 
-## 15. Qué llevarse
+## 16. Ingeniería del arnés
 
-Si te vas a quedar con cinco cosas.
+La sección 10 le dio al bucle una sola fila de una tabla y dijo que su estado
+vive "en el arnés". Esta sección trata de esa casilla, porque es donde está la
+mayor parte de la distancia entre una demostración y un sistema.
+
+Primero una advertencia sobre el nombre, en el espíritu de la sección 10.
+"Arnés" es uso asentado: es como la comunidad de herramientas para agentes llama
+al programa que rodea al modelo, y nadie lo discute. "Ingeniería del arnés" como
+disciplina con nombre no lo es, y presentarla como tal sería afirmar de más
+exactamente en el sentido contra el que avisa aquella sección. Léelo como un
+ámbito de trabajo y no como un campo.
+
+> **El arnés es todo lo que decide qué ve el modelo, qué puede hacer y qué pasa
+> con lo que produce.**
+
+La afirmación que le vale una sección: **el modelo es el componente menos
+controlable del sistema, y es el que todo el mundo intenta controlar primero.**
+Retocar el prompt y cambiar de modelo son las dos palancas que quedan a mano, y
+tienen la peor relación entre esfuerzo y varianza eliminada. Todo lo demás es
+software corriente, lo que significa que se puede especificar, testear,
+versionar y razonar, y casi nadie hace nada de eso con él.
+
+### Qué contiene un arnés
+
+| Componente | Decide | A qué se parece su ausencia |
+|---|---|---|
+| Montaje del contexto | Qué ve el modelo en este turno | Reglas obedecidas el martes y olvidadas el miércoles |
+| Superficie de herramientas | Qué acciones existen siquiera | Soluciones ingeniosas a problemas que no sabías que estaban al alcance |
+| Permisos | Dónde pueden aterrizar las escrituras | Una batería de tests que está de acuerdo con la implementación |
+| Bucle de control | Continuar, reintentar, parar, escalar | Ejecuciones que terminan cuando se termina el dinero |
+| Oráculos | Quién dice que ha funcionado | "Terminado" |
+| Estado | Qué sobrevive a un cuelgue | Trabajo que no se puede retomar, solo reiniciar |
+| Presupuesto | Qué cuesta antes de que mire una persona | La factura como primera señal |
+| Registro | Qué pasó, reconstruible después | Un resultado que nadie sabe explicar |
+
+Dos cosas sobre esa tabla. Solo una fila trata del modelo. Y todas las filas son
+ingeniería corriente que, aun así, no revisa nadie en la mayoría de los equipos,
+porque un arnés llega como pegamento, y el pegamento no se percibe como
+componente. Un arnés es un programa. Tiene especificación o tiene comportamiento
+sin documentar, y la sección 1 ya describió lo que pasa después.
+
+### Diseñar uno desde cero
+
+El instinto es empezar por el bucle, porque el bucle es la parte interesante. Es
+el extremo equivocado. Un bucle se define por su condición de salida y su
+condición de salida es un oráculo, así que un arnés diseñado empezando por el
+bucle acaba en un bucle que corre hasta que el modelo dice que ha terminado.
+
+Constrúyelo en este orden.
+
+**1. Nombra la unidad de trabajo.** Una unidad es lo que se espera que cierre
+una iteración. Acierta mal con esto y todo lo que va encima se comporta mal de
+maneras que parecen problemas del modelo: una unidad demasiado grande no cierra
+nunca y se queda en `pending` para siempre, una unidad demasiado pequeña gasta
+todo su presupuesto en reconstruir el contexto. Es la variable de Ralph de la
+sección 10, y va primero porque todas las decisiones posteriores dependen de
+ella.
+
+**2. Escribe el oráculo de una unidad.** Antes de que exista ninguna
+orquestación, responde a esto: ¿qué programa, ejecutado por alguien que no se
+fía de mí, decide si esta unidad está terminada? Si no hay respuesta, para. No
+tienes un problema de arnés, tienes un problema de especificación, y construir
+primero el arnés produce una máquina eficiente para llegar a ninguna parte en
+concreto.
+
+**3. Pon el estado en disco.** Lo que la siguiente iteración necesite saber
+tiene que poder leerse del sistema de ficheros y no vivir en la memoria de un
+orquestador. Es el argumento de Ralph de la sección 10 y es un requisito de
+durabilidad, no una preferencia: un arnés cuyo estado vive en un proceso pierde
+un día de trabajo con una conexión caída.
+
+**4. Define la superficie de herramientas, y mantenla pequeña.** Cada
+herramienta es una decisión que el modelo pasa a poder tomar. Las herramientas
+no son capacidad gratis, son factor de ramificación.
+
+**5. Fija los permisos antes de la primera ejecución, no después del primer
+incidente.** Qué rutas son escribibles en qué fase. La que la gente olvida no es
+producción, de esa se acuerda todo el mundo, es el oráculo, que sigue siendo
+escribible hasta que alguien ha visto una batería ponerse en verde por la razón
+equivocada.
+
+**6. Ahora escribe el bucle.** Condición de entrada, condición de salida,
+política de reintentos, salida por escalado. Debería ser aburrido. Si tu bucle
+es interesante, parte de esa inteligencia es estado que debería estar en disco.
+
+**7. Añade presupuestos, y después el registro.** Un límite de turnos y un
+presupuesto de tokens por unidad, y un registro de solo escritura de qué se
+ejecutó, sobre qué entradas, con qué veredicto. El registro es lo que hace que
+un incidente tenga respuesta seis semanas después, que es lo que la sección 1
+dice que se pierde primero.
+
+La nota honesta para terminar: un arnés mínimo viable es un script de shell, un
+directorio de ficheros y un comando de tests. La mayoría de los equipos que
+recurren a un framework de orquestación no han escrito todavía su oráculo, y un
+framework no lo aporta. Aporta reintentos, que es como un oráculo ausente se
+convierte en un oráculo ausente y caro.
+
+### Reducir errores sin cambiar el modelo
+
+Los mismos pesos, menos defectos. Es la parte del trabajo con mejor retorno y
+menos literatura. Las palancas van, más o menos, en orden de lo que compran por
+lo que cuestan.
+
+**Haz que la salida mala sea indecible.** Decodificación restringida o guiada
+por esquema, de la sección 10. Mover una restricción de *rechazada* a *no se
+puede emitir* elimina una clase de reintentos en vez de gestionarla. Se aplica
+en cualquier sitio donde el modelo tenga que elegir de un conjunto conocido, y
+los conjuntos conocidos son más frecuentes de lo que parecen: estados,
+identificadores, rutas de fichero, nombres de fase.
+
+**Reduce la superficie de decisión.** Menos herramientas, cada una más
+estrecha. Una herramienta que hace lo correcto gana a una herramienta con una
+opción que elige entre lo correcto y un tiro en el pie. Lo mismo vale para
+cualquier configuración que el modelo pueda ver: cada opción es una oportunidad
+de elegir la otra.
+
+**Haz que los fallos instruyan.** La mayor ganancia barata al alcance de casi
+todos los equipos y la que más sistemáticamente se salta. Cuando una
+comprobación falla, lo siguiente que lee el modelo es tu mensaje de error, y ese
+mensaje es un prompt tanto si alguien lo escribió como tal como si no. Un código
+de salida 1 produce conjeturas. *"FR-002 incumplida: el saldo 60000 supera
+MAX_BALANCE 50000, ver specs/FR-002.md"* produce un arreglo, porque nombra la
+regla, la observación y dónde mirar. El texto de los errores es el prompt con
+más tráfico del sistema y normalmente el único que nadie ha editado.
+
+**Pon lo invariable primero y lo variable al final.** Ordenar para la caché de
+prefijos del proveedor, de la sección 10, y para la relevancia al mismo tiempo.
+Ahorra dinero, y convierte las reglas estables en lo que el modelo ha visto más
+veces.
+
+**Separa las sesiones que tienen que discrepar.** Una revisión hecha en la
+sesión que escribió el código hereda el razonamiento que produjo el error.
+Sesión distinta, y donde importe permisos distintos: el principio cuatro,
+implementado con límites de proceso.
+
+**Haz que los reintentos se ganen su sitio.** La regla de la sección 10,
+reformulada como ajuste del arnés: un reintento solo se concede cuando la
+entrada contiene algo nuevo. La misma firma de fallo y ninguna hipótesis nueva
+significa escalar, no repetir. Sin esta regla, un bucle con presupuesto es una
+manera más lenta de gastarlo.
+
+**Punto de control en cada frontera de unidad.** Un fallo debería costar una
+unidad de trabajo y no una sesión. Estado en disco otra vez, visto desde el lado
+del coste.
+
+**Toma determinismo allí donde lo haya.** No del modelo, de todo lo que lo
+rodea: dependencias fijadas, relojes fijos, generadores con semilla, fixtures
+grabadas. El objetivo no es la generación reproducible, es el fallo atribuible.
+Si un arnés es no determinista en seis sitios, ningún fallo se puede localizar
+en el único sitio que es no determinista a propósito.
+
+Ahora el contrapeso, porque esto se lee demasiado fácilmente como la promesa de
+que el andamiaje sustituye a la capacidad. No lo hace. La prueba de si has
+tocado techo es: **¿una persona competente, con este contexto y estas
+herramientas, lo conseguiría?** Si sí y el agente falla, es un problema de arnés
+y se aplican las palancas de arriba. Si no, tienes un problema de descomposición
+disfrazado de problema de arnés, y más andamiaje compra un fallo más caro.
+
+Hay además una manera de que un arnés empeore las cosas activamente, y tiene una
+forma reconocible: la **colisión de instrucciones.** Un fichero de proyecto dice
+una cosa, una skill dice una segunda, una plantilla inyectada dice una tercera, y
+ninguno de los tres autores sabe que existen los otros dos. El síntoma es un
+comportamiento que varía entre sesiones sin razón visible, y el reflejo, añadir
+una cuarta instrucción que le diga al modelo cómo priorizar las tres primeras,
+es la *Verschlimmbesserung* de Böckeler llegando a su hora. El arreglo es
+aburrido: una autoridad por pregunta, y una lectura periódica de todo lo que se
+le envía de verdad al modelo, que es algo que llamativamente pocos equipos han
+mirado alguna vez entero.
+
+### Validar el trabajo de un agente automáticamente
+
+"Automáticamente" carga con mucho peso en esa pregunta, así que conviene
+partirla. La comprobación automática del *cumplimiento de algo ya acordado* es
+en gran medida un problema de ingeniería resuelto, y el resto de esta sección
+trata de hacerlo bien. La comprobación automática de *si lo acordado era
+correcto* no está resuelta, no está cerca, y cualquier herramienta que afirme lo
+contrario ha movido el juicio a algún sitio donde no puedes verlo.
+
+Un oráculo es lo que produzca el veredicto. Se diferencian en lo que pueden
+atrapar.
+
+| Oráculo | El veredicto que da | Su punto ciego |
+|---|---|---|
+| Esquema o contrato | La forma es legal | No dice nada del significado |
+| Ejemplo ratificado | Este caso con nombre coincide con una respuesta acordada | Solo los casos que alguien escribió |
+| Propiedad | Una regla se cumplió sobre entradas generadas | Fácil de enunciar de forma vacía, difícil de enunciar bien |
+| Metamórfico | Dos ejecuciones relacionadas se relacionan como deben | Necesita una relación que sepas nombrar |
+| Diferencial | Lo nuevo coincide con una referencia | Hereda los errores de la referencia |
+| Repetición | Las mismas entradas produjeron las mismas salidas | Consistencia no es corrección |
+| Tipos y análisis estático | Una clase de defecto está ausente | Ausencia de una clase, no presencia de intención |
+| Un modelo como juez | Una opinión rápida y barata | No es ejecutable en el sentido de la sección 8 |
+
+La última fila es la tentadora y la que más se usa mal. Un modelo revisando un
+diff es útil de verdad: buen triaje, atrapa cosas que la gente se salta al leer
+por encima, cuesta casi nada. No es una puerta. No es reproducible, se le puede
+convencer de que cambie de posición desde la cosa misma que está revisando, y
+una comprobación que devuelve un veredicto distinto el martes es una
+notificación con pasos extra. Úsalo para decidir qué mira una persona. No lo
+uses para decidir qué se fusiona.
+
+Hay una versión más fuerte del principio cuatro que la tabla no recoge y que
+merece conocerse aunque casi nadie pueda pagarla. Ryan describe el montaje de
+StrongDM, que desde 2024 produce software con tres ingenieros y sin nadie que
+escriba ni revise código: los escenarios de evaluación viven *fuera* del
+repositorio y el agente no los ve nunca. No es que no pueda editar el oráculo;
+es que no sabe qué contiene, como el conjunto de validación que un modelo no ha
+visto durante el entrenamiento. Un agente que puede leer los tests puede, por
+presión de optimización y sin mala intención, escribir código que los pasa sin
+hacer lo que pretendían. Con el oráculo oculto esa vía no existe. El segundo
+componente es lo que hace posible el primero: réplicas de comportamiento de
+cada servicio externo, para que el agente desarrolle contra entornos simulados y
+no toque datos reales. Para la mayoría de los equipos eso es una dirección, no
+una receta. La receta mínima sigue siendo la regla anterior: que el oráculo no
+sea escribible mientras se implementa.
+
+Tres reglas hacen que funcione el resto.
+
+**Un oráculo que el agente puede editar no es un oráculo.** El principio cuatro,
+expresado en permisos de fichero. Durante la implementación las expectativas no
+son escribibles. Un cambio que toca una implementación y sus expectativas en un
+mismo commit dispara la revisión por construcción y no por la vigilancia de
+alguien. Todo lo demás de esta sección depende de esta regla, y es la primera
+que se relaja, porque relajarla hace desaparecer una build en rojo.
+
+**Confirmar el rojo es como se prueba el oráculo.** La disciplina de la sección
+15 suele leerse como una regla de tests primero. En términos de arnés es más
+precisa que eso: es la única comprobación barata de que el oráculo observa lo
+que dice observar. Una expectativa que pasa antes de que exista la
+implementación no es evidencia, y las tres explicaciones posibles, que el
+comportamiento ya existía, que el test no observa lo que dice, o que la
+especificación describe mal el sistema, son cosas que conviene aprender antes de
+escribir el código y no después de ponerlo en producción.
+
+**Da por hecho que la batería es decorativa hasta que algo demuestre lo
+contrario.** "¿Estos tests valen algo?" tiene una respuesta mecánica: cambia una
+constante en la implementación y mira si algo se pone en rojo. El testing por
+mutación automatiza exactamente eso, y es lo más parecido que hay a un oráculo
+para tus oráculos. Caro sobre toda una base de código, barato sobre los veinte
+ficheros que implementan tus reglas ratificadas, que es el único sitio donde la
+respuesta importa.
+
+Y el límite, dicho sin rodeos, porque una sección sobre validación automática
+que lo omita está vendiendo algo. Ningún oráculo te dice si la especificación
+era correcta. Ninguno te dice si una abstracción tiene el tamaño adecuado, que
+es la razón de que las puertas de forma de la sección 8 sean preguntas que se le
+hacen a una persona y no aserciones que ejecuta un programa. Ninguno te dice si
+un requisito legal se leyó bien. El trabajo del arnés con los tres no es
+decidirlos. Es encaminarlos a quien decide, mientras todavía es barato, y
+negarse a cerrar mientras estén abiertos.
+
+### Construir flujos con agentes
+
+La primera pregunta es la que la gente se salta, porque las dos respuestas se
+llaman igual en el material de marketing.
+
+> **Enumera los puntos de decisión. Si puedes enumerarlos, escribe un flujo de
+> trabajo. Si no puedes, necesitas un agente, y entonces necesitas acotarlo.**
+
+El flujo de control de un flujo de trabajo lo escribes tú y se puede inspeccionar
+antes de ejecutarlo. El de un agente se decide en tiempo de ejecución, lo que
+compra adaptabilidad y te cuesta la capacidad de saber de antemano qué va a
+pasar. La mayoría de los sistemas en producción que se describen como agénticos
+son flujos de trabajo con uno o dos pasos genuinamente agénticos dentro, y esa
+suele ser la forma correcta y no una confesión de timidez.
+
+Tengas el que tengas, cinco reglas evitan que se descomponga.
+
+**Las fases son estados, con condiciones de entrada y de salida.** No etapas de
+un diagrama. Una fase en la que puedes entrar sin cumplir una condición es una
+etiqueta, y a menos que la condición de salida sea un oráculo la fase no
+termina, se abandona.
+
+**Los traspasos llevan artefactos, no conversación.** La fase siguiente lee
+ficheros. Si necesita el razonamiento de la fase anterior, ese razonamiento es
+ahora un artefacto, y se aplica el principio uno. Pasar hacia delante una
+transcripción parece continuidad y es la manera en que un flujo adquiere una
+dependencia de una ventana de contexto que nadie controla.
+
+**Los roles tienen permisos de escritura distintos.** Quien propone escribe
+especificaciones, quien implementa escribe código, ninguno de los dos escribe
+evidencia. Justificado por partida doble, como señala la sección 10: la higiene
+de contexto lo quiere y la separación de funciones lo exige.
+
+**Los puntos de control humanos son estados, no interrupciones.** La
+ratificación es una fase de la tabla de la sección 15 exactamente por esto. Un
+punto de control modelado como interrupción se optimiza hasta desaparecer por
+ser fricción, porque eso es lo que parece en un cuadro de mando. Un punto de
+control modelado como estado tiene una condición de entrada, una cola y una
+latencia, y las tres se pueden medir y discutir. Palacio da la razón práctica,
+que es la fatiga de aprobación: un agente que pide permiso por cada cambio
+produce decenas de interrupciones por sesión, y la respuesta de la gente es
+aprobar sin leer. Concentrar la revisión en las puertas entre fases, donde la
+información vale más y corregir cuesta menos, es lo que permite que la fase de
+implementación se ejecute con poca intervención.
+
+**Todo bucle necesita una salida con nombre que no sea el éxito.** Escalar, y
+decir a quién, con qué. Un flujo sin ella encuentra sus propias salidas, y las
+que encuentra son agotar el presupuesto, agotar el contexto y declarar el éxito.
+La tercera es la cara. Alenezi lo formula como propiedad del bucle y la
+formulación es la correcta: agotar el presupuesto escala a una persona en vez
+de bajar el listón en silencio.
+
+Junto todo, eso es lo que es la tabla de fases de la sección 15: una máquina de
+estados cuyo estado vive en ficheros, cuyas transiciones están guardadas por
+oráculos, y cuyos permisos de escritura difieren por fase. Escrita como
+especificación del arnés, tiene este aspecto.
+
+| Fase | Lo que el agente puede escribir | La transición exige |
+|---|---|---|
+| Propuesta | Borradores de propuesta | Esquema válido, los identificadores citados resuelven |
+| Clarificación | La lista de preguntas | Ninguna pregunta bloqueante sin responder |
+| Ratificación | Nada | Una aprobación humana registrada |
+| Evidencia | Borradores de expectativas | Aprobación humana del resultado esperado |
+| Confirmar el rojo | Nada | La evidencia nueva falla |
+| Implementación | Solo rutas de código | La build pasa |
+| Verificación | Solo rutas de código | Todas las filas requeridas verificadas, CI en verde |
+| Integración | Nada | La fórmula de cierre evalúa a verdadero |
+
+La columna del medio lleva el argumento. Dos fases en las que el agente no
+escribe nada en absoluto son lo que impide que el bucle sea un circuito cerrado,
+y son las dos primeras que se ensanchan discretamente cuando un equipo va con
+retraso.
+
+Palacio expresa la misma tabla desde el lado del agente, con tres niveles que
+cualquier fichero de proyecto puede adoptar tal cual: *siempre*, lo que se hace
+sin preguntar, como ejecutar los tests antes de un commit; *pregunta primero*,
+lo que puede ser correcto pero tiene impacto, como tocar el esquema, añadir una
+dependencia o modificar la API pública; y *nunca*, las líneas rojas, como
+confirmar secretos, borrar un test que falla o salirse del alcance de la tarea.
+Lo útil del esquema no son los ejemplos, es que separa autonomía de permiso: el
+nivel *siempre* existe para que el agente no interrumpa por cada microdecisión,
+y el nivel *nunca* elimina categorías enteras de error en vez de detectarlas. Y
+es un marco que se mueve: algo pasa de *pregunta primero* a *siempre* cuando el
+equipo ha visto al agente decidir bien en ese ámbito. Los permisos de la tabla
+anterior son lo mismo con una diferencia: el fichero de proyecto lo pide y el
+arnés lo impone.
+
+### Qué le da cada uno al otro
+
+Esto no es la relación entre una metodología y sus herramientas, y se lee mejor
+en las dos direcciones.
+
+**El trabajo de especificación le da al arnés lo que no puede calcular por sí
+mismo:** una condición de salida que significa algo, que son obligaciones
+ratificadas y no la sensación de completitud del propio modelo; un modelo de
+estado ya diseñado, porque la matriz de cobertura es el estado del bucle; una
+razón para los límites de permisos que no es paranoia; y un disparador de
+escalado definido, el marcador de clarificación.
+
+**El arnés le da al trabajo de especificación lo único que lo hace real:** una
+puerta necesita algo que de verdad se ejecute, de verdad bloquee y no se pueda
+sortear, y las tres son propiedades del arnés. La sección 8 define qué es una
+puerta. El arnés es donde "obligatoria" deja de ser un adjetivo.
+
+Y el argumento de Alenezi para poner el juicio humano arriba y no abajo es el
+más contundente que conozco, porque no apela a la virtud sino a la aritmética.
+Una persona revisando código generado a la velocidad a la que se genera es a
+la vez el cuello de botella y el eslabón más débil, y lo segundo está medido:
+quien revisa con un asistente al lado escribe código menos seguro y está más
+convencido de lo contrario. El recurso escaso va donde más palanca tiene,
+redactar el contrato y atender las escaladas. El volumen de la comprobación lo
+hace el validador.
+
+Que es la frase que hay que llevarse de esta sección:
+
+> **Una especificación sin arnés es un deseo. Un arnés sin especificación es una
+> manera eficiente de converger hacia la intención de nadie.**
+
+---
+
+## 17. De dónde sale la especificación
+
+El bucle de la sección 15 empieza en la captura, con "la petición literal".
+Todo lo que viene después da por hecho que alguien escribió esa frase. Seyff y
+Glinz, en un artículo de posición de 2026, señalan lo que esa suposición
+esconde: la práctica "guarda silencio en gran medida sobre de dónde salen las
+especificaciones". La herramienta asume que las escribe un desarrollador, a
+solas con un asistente. El censo de SpecMine confirma la forma: la
+especificación la escribe un desarrollador o, "más a menudo", la redacta una
+herramienta de IA y el desarrollador la retoca.
+
+Léelo despacio, porque es la parte más débil de todo el montaje. El artefacto
+más importante del proceso lo redacta la persona con menos acceso a lo que el
+negocio quiere, y lo redacta con ayuda de un modelo que tiene sus propias
+inclinaciones. Las secciones anteriores gobiernan lo que pasa con la
+especificación una vez existe. Esta trata de los dos fallos que pasan antes.
+
+### Desambiguar demasiado pronto
+
+Seyff y Glinz lo dicen con una frase que merece guardarse: *la desambiguación
+prematura puede ser un defecto y no una virtud.* Si el modelo resuelve cada
+elemento poco definido adivinando, fija interpretaciones que las personas
+interesadas no han tenido ocasión de validar. Su regla para la asistencia en la
+fase temprana es que señale la falta de definición en vez de resolverla en
+silencio: "este elemento aparece en tres sitios con relaciones distintas, ¿es
+intencionado?".
+
+Es el principio dos visto desde el otro lado. No basta con que el artefacto
+pueda decir "no lo sé"; el paso que lo redacta tiene que tener permiso para
+dejar cosas abiertas, y una plantilla que exige un valor en cada campo se lo
+quita. Conecta con el coste que la sección 3 llamaba compromiso prematuro y con
+la distinción de Hill que retoma la sección 19: una especificación escrita
+antes de validar nada es una conjetura con estructura. Para lo que ya entiendes,
+el orden "primero la especificación, después el código" es el correcto. Para lo
+que todavía no entiendes, la especificación honesta se escribe después del
+prototipo y antes de la segunda versión.
+
+### La deriva hacia el sistema medio
+
+El segundo fallo es más sutil y no tiene nombre en la literatura sobre
+especificaciones, aunque sí en la de modelado. Los modelos de lenguaje traen
+inclinaciones fuertes hacia las notaciones estándar, UML, BPMN, diagramas
+entidad-relación, y, más en general, hacia la forma más frecuente de un
+problema. Seyff y Glinz lo llaman homogeneización: sin contramedidas, los
+proyectos asistidos por un modelo derivan hacia el mismo puñado de patrones.
+Traducido a especificaciones, un borrador redactado por un modelo deriva hacia
+el sistema medio, que no es el tuyo. Sus contramedidas son concretas: limitar la
+recuperación al contexto de la sesión, penalizar el vocabulario importado, y un
+modo explícito de "quédate dentro de nuestro lenguaje".
+
+La versión de esta guía es una prueba de lectura. El vocabulario de la
+especificación tiene que ser el del negocio. Un borrador que llega con palabras
+que nadie en la sala usa es un borrador que ha importado otro sistema, y las
+seis preguntas de la sección 5 se contestan solas, con las respuestas de otro,
+sin que se note.
+
+### Tres reglas de diseño que ya estaban aquí con otro nombre
+
+Los autores proponen principios para la asistencia de IA en esa fase, y tres de
+ellos son cosas que esta guía sostiene desde otro ángulo, lo que sugiere que son
+propiedades del problema y no de la herramienta.
+
+*Proponer, nunca imponer.* Toda asignación, todo cambio estructural, es una
+sugerencia que la persona acepta, modifica o rechaza. Es "el agente propone,
+una persona ratifica" aplicado antes de que exista un requisito.
+
+*Inferencias visibles y reversibles.* Cada inferencia del modelo es un evento
+de primera clase en la historia del modelo, y se puede deshacer. Es el
+principio uno aplicado a las decisiones que toma el redactor, no solo a las que
+toma el negocio.
+
+*Trazabilidad de cada inferencia a su origen.* Cada tipo propuesto, cada regla
+inferida, tiene que apuntar al elemento del que sale, y en la práctica eso se
+impone exigiendo que cada propuesta cite al menos un elemento de origen por
+identificador. Esta es la que la guía no tenía como comprobación y debería. En
+el repositorio de la sección 13, cada requisito deriva de una intención. Un
+requisito cuyo `derives_from` está vacío es un requisito que inventó el
+redactor, y un validador puede negarse a ratificar mientras haya uno. Es una
+comprobación barata de la única clase de invención que la sección 5 no puede
+ver: la que llega ya vestida de regla.
+
+### La entrevista
+
+Hay una técnica más mundana que la mayoría de los equipos puede aplicar mañana,
+y Fontoura la toma de la documentación de Anthropic: antes de escribir nada,
+pídele al modelo que te entreviste. Que no pregunte lo obvio, que vaya a las
+partes difíciles que no has considerado, casos límite, compromisos, y que solo
+después escriba la especificación. Después, implementa en una sesión limpia,
+para que la implementación se ajuste al documento y no a la conversación que lo
+produjo.
+
+Es la fase de clarificación de la sección 15 ejecutada antes de la propuesta
+en vez de después, y funciona por la misma razón que el marcador: convierte en
+preguntas lo que de otro modo serían suposiciones. Con un límite que la sección
+1 ya señaló: una entrevista produce respuestas a la velocidad a la que una
+persona puede darlas, en caliente. El marcador conserva la opción de no
+responder todavía. Una buena entrevista termina con algunas preguntas sin
+contestar, escritas, y con el token de estado sin cambiar.
+
+---
+
+## 18. Cuando hay más de un lector
+
+Todo lo anterior vale para una persona y un agente. En un equipo, la
+especificación conserva ese trabajo y coge dos más, y no verlo es como se acaba
+con una carpeta de especificaciones que nadie lee y un ritual en el que nadie
+cree.
+
+| La especificación está entre | Lo que lleva |
+|---|---|
+| Una persona y el agente | La única memoria que tiene el agente, y lo que acota su deriva |
+| Una persona y otra | Lo que un compañero lee en vez de leerte la mente |
+| Un equipo y otro | El contrato en la frontera donde dos equipos se integran |
+
+La trampa es tratar una especificación de equipo como una especificación
+individual con más autores. Sigues escribiendo notas privadas, les pones una
+carpeta compartida y lo llamas práctica. Las notas siguen dando por supuesto
+todo lo que hay en tu cabeza. Un compañero abre el fichero, tropieza con la
+primera regla implícita y adivina, que es exactamente el problema que las
+especificaciones existen para matar. La prueba de la sección 3 se aplica igual:
+tu compañero y el agente tienen la misma desventaja, ninguno estaba en tu
+cabeza.
+
+### La discusión se muda a la capa más barata
+
+La regla que convierte una carpeta en una práctica de equipo es la que menos se
+escribe, y Fontoura la escribe: **la especificación entra en revisión antes de
+que exista el código.** Los requisitos llegan como una pull request, alguien
+los lee, y solo cuando los aprueba cambia el estado y empieza el diseño. Lo
+mismo con el diseño. Lo mismo con las tareas.
+
+Una revisión de código después de implementar atrapa erratas en una decisión
+que ya estaba mal. Una revisión de la especificación atrapa la decisión
+equivocada antes de que una línea la codifique. La revisión más cara que hace
+un equipo es la de después, cuando el desacuerdo es sobre una cosa terminada.
+
+| Dónde aparece el desacuerdo | Lo que cuesta resolverlo |
+|---|---|
+| En la pull request de los requisitos | Un hilo de comentarios, antes de que exista código |
+| En la revisión de código | Reescribir una funcionalidad que ya funciona |
+| En la integración, entre equipos | Dos implementaciones que no encajan |
+| En producción | Un incidente, y después todo lo anterior |
+
+El valor de la especificación en un equipo no es la documentación. Es mover la
+discusión a la capa donde tenerla cuesta menos. Un equipo con especificaciones
+no discrepa menos. Discrepa antes.
+
+### Revisar un documento no es revisar código
+
+Palacio hace una observación que parece menor y no lo es: las puertas
+anteriores a la implementación revisan texto, no código, y eso cambia quién
+puede participar y qué se está preguntando. Más gente puede leer una
+especificación que un diff: quien conoce el negocio puede decir si los
+requisitos son los correctos sin saber programar. Y las dos preguntas que
+compiten en una revisión de código, "¿es esto lo que queremos?" y "¿está bien
+construido?", se separan: las puertas de antes responden a la primera, la
+verificación de después responde a la segunda. Dos revisiones enfocadas cansan
+menos que una que intenta hacer las dos cosas.
+
+Sobre quién aprueba, la respuesta de Palacio es la buena: depende del equipo, y
+lo esencial no es el rol sino que la aprobación sea un acto deliberado y
+explícito. Alguien lee el artefacto, lo evalúa contra criterios conocidos y
+decide si basta para avanzar. Quien conoce el dominio aprueba los requisitos.
+Quien conoce el código aprueba la descomposición en tareas, que es la puerta
+más técnica y donde más vale la pena que estén los desarrolladores. Y alguien
+vigila las puertas mismas, para que ni se salten por presión de calendario ni
+se conviertan en cuello de botella porque la persona que aprueba no está.
+
+### El canon vive en la herramienta
+
+A solas, tus convenciones viven en ti. En un equipo, si viven solo en cabezas,
+cada desarrollador deriva en su propia dirección y acabas con cinco dialectos
+de especificación que no se parecen en nada. El arreglo es el principio siete
+en su forma organizativa: el canon va donde lo lee la herramienta. El contexto
+duradero de la sección 13 con todo el equipo como autor y lector, las plantillas
+y las skills que llevan el formato y el listón a la máquina de cada uno, y las
+convenciones escritas: cuándo un cambio necesita especificación, cuál es el
+formato, quién aprueba cada puerta.
+
+Esto cambia también la incorporación. Una persona nueva lee las
+especificaciones y el contexto duradero, no una página de wiki y un compañero
+al que preguntar. Una convención que vive en la memoria de la persona más
+veterana escala exactamente al número de personas que esa persona puede
+corregir en persona. Una codificada en un fichero escala a todo el que ejecute
+el agente, incluido el agente.
+
+### La puerta tiene que ser física
+
+A solas, el token de estado lo lees tú. En un equipo, una puerta que solo vive
+en un fichero que nadie abre es una puerta que se salta, porque la mayoría no
+la ve. Fontoura la pone en un tablero: una columna por fase, una tarjeta por
+cambio, y la tarjeta se mueve cuando se aprueba la puerta. Aprobar *es* mover.
+Con una regla que evita que el tablero se convierta en una segunda fuente de
+verdad: Git guarda el artefacto y el tablero refleja el estado; la tarjeta
+apunta a la especificación, no la copia.
+
+Y la puerta gana músculo con lo que la sección 8 llama política obligatoria,
+aplicada ahora a las personas: la protección de rama se niega a fusionar sin
+revisión. La puerta tiene que ser física, no una norma que la gente recuerda en
+sus días buenos.
+
+### El cuello de botella se mueve
+
+La razón de que todo esto compense en un equipo no tiene nada que ver con la
+velocidad de teclear. A solas, tu cuello de botella era tu propio bucle. En un
+equipo la generación se abarata deprisa, porque todo el mundo tiene un agente,
+y el equipo puede producir varias veces más código que antes. Lo que sale a
+producción no crece al mismo ritmo, porque la pared se ha movido: ahora está en
+la revisión, en el despliegue y en la coordinación entre personas y equipos.
+Fontoura lo resume en una frase que merece el subrayado: **generar es barato;
+integrar es el trabajo.**
+
+El único caso de empresa que Alenezi cita apunta en la misma dirección desde el
+otro lado, y con la reserva de que es un solo caso: un ingeniero con cuatro
+agentes especializados entregó una iniciativa dimensionada para un equipo de
+cuatro personas, y la ganancia más consistente no vino de generar más rápido
+sino de colapsar el bucle exterior de coordinación entre disciplinas, porque
+una especificación compartida era el único referente al que todos miraban. Un
+tablero con límite de trabajo en curso en la columna de revisión hace visible
+esa pared: las tarjetas se amontonan ahí, y ningún agente más rápido las
+despeja.
+
+### Cómo falla en un equipo
+
+Palacio cataloga las formas en que esto sale mal mientras parece salir bien, y
+tres merecen vigilarse desde el primer mes.
+
+**Teatro de especificación.** Se escriben especificaciones y se ejecutan las
+puertas, pero la revisión es superficial y la firma es un trámite. La causa
+suele ser una de dos: presión de tiempo, o especificaciones tan genéricas que
+revisarlas no aporta nada. La respuesta no es más disciplina, es o mejores
+especificaciones o menos proceso en los cambios que no lo necesitan.
+
+**Documentación zombi.** El proyecto acumula especificaciones que nadie
+consulta, nadie actualiza y nadie borra. Es el modo anclado adoptado sin un
+proceso de mantenimiento: rigor en el primer ciclo, abandono en los siguientes.
+La decisión consciente de qué especificaciones se mantienen y cuáles se tiran
+tras implementar es parte del trabajo, y una especificación que se mantiene
+tiene responsable.
+
+**La especificación como herramienta de control.** Cada decisión tiene que
+pasar por una puerta y la autonomía de quien construye desaparece. Es confundir
+la estructura del proceso con el control del equipo. El nivel *siempre* de la
+sección 16 existe precisamente para que las decisiones rutinarias no necesiten
+aprobación; si el equipo siente que las puertas le limitan en vez de apoyarle,
+la calibración está mal.
+
+---
+
+## 19. Lo que dice la evidencia
+
+La revisión anterior de esta guía terminaba con una advertencia: nada de esto
+está demostrado. Desde entonces alguien lo ha medido, y el resultado no es
+halagador. Esta sección existe porque una guía que argumenta a favor de una
+práctica debe a sus lectores el mejor argumento en contra, y ahora hay uno con
+datos.
+
+### El estudio
+
+Hill, en un documento de trabajo de abril de 2026, analiza 100.247 pull
+requests fusionadas en 119 repositorios de código abierto. Deriva cinco
+hipótesis de las afirmaciones literales de los fabricantes, Spec Kit y Kiro
+sobre todo: que las especificaciones reducen los defectos, que reducen el
+retrabajo, que mejores especificaciones producen menos defectos y menos
+retrabajo, y que acotan el alcance del código generado por IA. Traza los
+defectos hasta el commit que los introdujo y compara a cada autor consigo
+mismo, sus cambios con especificación contra sus cambios sin ella, que es el
+diseño más conservador disponible para datos observacionales.
+
+No se sostiene ninguna de las cinco. Dentro de cada autor, los cambios con
+especificación llevan asociados más defectos (1,4 puntos más, en el límite de
+la significación) y más retrabajo (5 puntos más, con p por debajo de 0,001).
+La calidad de la especificación, puntuada en siete dimensiones que copian las
+plantillas de las propias herramientas, tiene un efecto sobre el retrabajo de
+exactamente cero. Y el efecto de acotar el alcance de los cambios con IA no
+aparece. Cuatro comprobaciones de robustez, con otras medidas de resultado, con
+las variables clásicas de predicción de defectos, dimensión a dimensión y a
+nivel de repositorio, dicen lo mismo. Añadir "tiene especificación" a un modelo
+de predicción de defectos mejora su ajuste en 0,000014.
+
+La lectura del autor es la de la medicina: confusión por indicación. Las
+tareas más difíciles, grandes y arriesgadas son las que reciben
+especificación, y son también las que producen más defectos, así que la
+especificación señala la dificultad en vez de reducirla.
+
+### Lo que sí dice, y lo que no
+
+Los límites los enumera el propio estudio, y son los que un lector honesto
+apuntaría. Todo es código abierto, con una muestra de conveniencia. La medida
+de "tiene especificación" es deliberadamente laxa: un enlace a una incidencia
+cuenta. La calidad la puntuó un modelo de lenguaje. Y la mayor parte de los
+datos son anteriores a los flujos agénticos: solo 2.650 pull requests llevan
+etiqueta de IA, y en ellas la especificación no muestra ningún efecto en
+ninguna dirección; el subconjunto más parecido al flujo que venden las
+herramientas, especificaciones de alta calidad en cambios con IA, da 4,8 puntos
+menos de defectos sobre 42 autores, que el autor califica de sugerente y no
+robusto. Así que el mejor dato disponible dice que el beneficio anunciado no se
+ve, no dice que la práctica sea inútil, y todavía no observa el flujo al que
+más apunta.
+
+Lo que este estudio hace con las afirmaciones comerciales es definitivo, y lo
+que hace con esta guía es distinto, y conviene separar las dos cosas. El
+argumento de la sección 1 nunca fue "menos errores". Fue que alguien pueda
+responder, seis semanas después, por qué el sistema hace lo que hace y quién lo
+acordó. Hill llega al mismo sitio desde los datos: las especificaciones "crean
+valor después de que el código salga, no durante la generación", como rastro
+de auditoría y como documentación que sobrevive a quien la escribió. Y añade
+la frase que resume mejor que ninguna de esta guía por qué la generación no
+resuelve el problema: *la especificación le dice a la IA qué construir; no le
+dice lo que olvidó especificar.* La parte difícil no se resuelve, se reubica.
+
+Que esta guía sobreviva al estudio porque nunca prometió lo que el estudio
+refuta es una defensa, y también una afirmación más débil, y hay que decirla
+como tal: lo que se defiende aquí es quién responde de qué y qué se puede
+reconstruir, no una tasa de defectos.
+
+### La cadena del 50 %
+
+Hay un detalle del estudio que esta guía tiene que recoger porque es su propia
+advertencia sobre las citas heredadas cumpliéndose. Piskala afirma que
+"estudios controlados muestran reducciones de errores de hasta el 50 %". Hill
+siguió la cita: lleva a un artículo del blog de desarrolladores de Red Hat y a
+un artículo de InfoQ, y ninguno de los dos contiene un estudio, un experimento
+ni un dato. Es una opinión de practicante que adquirió aspecto de evidencia a
+base de repetirse. El apartado de fuentes de esta guía ya avisaba de que
+Piskala es un argumento bien organizado y no evidencia; ahora se sabe además
+que la única cifra que da no es suya ni de nadie.
+
+### Los números del otro lado
+
+Los números favorables existen y conviene leerlos con la misma lupa. El modelo
+de referencia de Alenezi lleva en el resumen una reducción del 73 % en defectos
+de seguridad bajo restricciones constitucionales y una reducción del 50 % en el
+tiempo de salida al mercado. En el cuerpo del artículo, el propio autor
+clasifica ambos como "evidencia de caso sin replicar", sobre la que "el
+argumento no apoya su peso": un proyecto bancario con el mismo desarrollador
+en las dos condiciones, y un ingeniero con cuatro agentes en un banco
+brasileño. Léase el resumen y luego ese párrafo, y mídase la distancia. Lo que
+sí tiene el artículo, y es más útil que las cifras, es un contraejemplo
+honesto: un experimento preinscrito de Borg y otros no encontró desventaja de
+mantenibilidad en código desarrollado con asistentes cuando había disciplina de
+revisión convencional. La lectura de Alenezi es que la variable moderadora es
+la gobernanza, no la IA, y él mismo la marca como hipótesis coherente con los
+datos y no como hallazgo.
+
+Fontoura aporta un caso de practicante que vale más por cómo lo delimita que
+por sus cifras: trece aplicaciones, tres APIs, unas 138.000 líneas y unos 1.650
+tests, en setenta días, a solas, sobre 28 especificaciones. Los límites los
+escribe él: no generaliza, porque el método externaliza la pericia y no la
+fabrica; se midió la velocidad y no se auditó la calidad; había una fecha de
+entrega haciendo trabajo; y es un dato sin grupo de control. Su conclusión es
+la correcta: el método funcionó a esa escala, una vez, para ese operador.
+
+### Los críticos de oficio
+
+Dos críticas de practicantes circulan lo bastante como para citarlas. Scott
+Logic puso Spec Kit a prueba y lo encontró unas diez veces más lento que el
+desarrollo iterativo, produciendo miles de líneas de markdown que aun así
+dieron código con errores; lo llamó "waterfall reinventado". Zaninotto, desde
+la experiencia de Marmelab en producción, escribe que la práctica brilla al
+empezar de cero y que, a medida que la aplicación crece, las especificaciones
+"pierden el punto más a menudo y frenan el desarrollo". Las dos son críticas a
+la forma de una herramienta, un flujo único para todos los tamaños, que las
+secciones 3 y 11 ya hacen, y la respuesta de Palacio es la proporcionalidad:
+un arreglo de una línea no pasa por cuatro fases. Pero no conviene despacharlas
+tan rápido. Lo que las dos describen, la relación entre volumen de documentos y
+cambio real, es lo que Hill mide como retrabajo, y le sale en la misma
+dirección.
+
+### Lo que se sabe del problema, no del remedio
+
+Hay un segundo cuerpo de datos que las fuentes citan mucho y que conviene
+situar, porque no habla de especificaciones sino de asistencia con IA en
+general. METR, en 2025, midió a dieciséis desarrolladores experimentados sobre
+sus propios repositorios: con herramientas de IA tardaron un 19 % más y
+creyeron haber ido un 24 % más rápido. El informe DORA de 2025, según lo
+recoge Fontoura, encontró un 98 % más de pull requests y un 243 % más de
+incidentes por pull request en los equipos con IA. Pearce y otros encontraron
+vulnerabilidades en cerca del 40 % del código generado en contextos sensibles.
+Esta guía cita esos tres a través de otras fuentes y así lo dice en el
+apartado de fuentes. Establecen el problema con solidez: la velocidad es real,
+la percepción de la velocidad no es fiable, y la tasa de fallo sube más rápido
+que el caudal. No establecen que la especificación sea el remedio. Eso es lo
+que Hill fue a buscar y no encontró.
+
+### Lo que se sabe de la práctica misma
+
+SpecMine, el censo de la Carnegie Mellon de julio de 2026, es el primer
+retrato de la práctica a escala, y dice tres cosas que un lector debería tener
+en la cabeza al leer cualquier afirmación sobre ella. La práctica tiene un año:
+el 99,7 % de las 470.795 especificaciones se creó en 2025 o después. La mayor
+parte es andamiaje: de 73.030 repositorios, 923 tienen cien estrellas o más, y
+el censo marca los ficheros diminutos, los marcadores sin rellenar y el texto
+de relleno como señales de plantillas que nadie completó. Y cómo una
+especificación se convierte en código sigue siendo, en palabras de los autores,
+una pregunta abierta: el 81,2 % de las pull requests que tocan una
+especificación tocan también código, pero eso es una heurística, no una
+observación de la relación. El estudio que hay que esperar es el que cruce ese
+censo con los resultados: cuántos marcadores se resuelven, cuántas
+especificaciones se abandonan a medias, y si alguna de las dos cosas predice
+algo.
+
+### Qué medir en tu propio equipo
+
+Como ningún estudio observa todavía tu flujo, la medida que importa es la tuya.
+Palacio propone un cuadro razonable, y esta guía lo adopta con un cambio de
+énfasis. De flujo: la proporción entre tiempo de especificación y tiempo de
+implementación, la tasa de aprobación en primera revisión en cada puerta, y la
+tasa de desviación, cuántas veces el agente se salió de los parámetros de la
+especificación y hubo que intervenir. De resultado: la calidad al primer
+intento, el tiempo de retrabajo y el tiempo de revisión, que con un contrato
+claro debería bajar porque se revisa contra la especificación y no contra el
+criterio del revisor. Y lo que no medir: líneas generadas y número de
+especificaciones; más especificaciones no es mejor.
+
+El cambio de énfasis es este. Las tres medidas de resultado son exactamente las
+que Hill encontró en la dirección equivocada en su muestra. Si en la tuya
+también salen así, la sección 3 ya dijo lo que toca: la estructura no se ha
+ganado su sitio, y no hay lealtad que valga a una práctica que empeora las
+cifras que prometía mejorar. Lo que esta guía pide que se mida además, y ningún
+estudio mide todavía, es lo que defiende: cuánto tarda alguien en responder,
+sobre un cambio de hace tres meses, qué se decidió, quién lo aprobó y qué
+evidencia lo sostiene. Si esa cifra no baja, tampoco hay excusa.
+
+### Resumen honesto
+
+Los beneficios que se venden no son los beneficios que se han mostrado. Menos
+defectos y menos retrabajo se han buscado a escala y no han aparecido. Memoria,
+decisiones atribuibles y evidencia que cae del proceso no se han medido, y son
+el argumento de esta guía. Y ningún estudio observa todavía el flujo en el que
+la especificación es la entrada principal de un agente, que es donde las
+herramientas apuntan y donde esta guía vive. Esta sección es la que antes
+envejecerá, y es la que hay que releer en cada revisión.
+
+---
+
+## 20. Qué llevarse
+
+Si te vas a quedar con siete cosas.
 
 1. **La conversación no puede ser el único sitio donde vive la intención.**
    Cualquier cosa que deba sobrevivir a una sesión tiene que ser un fichero del
@@ -1225,11 +2290,21 @@ Si te vas a quedar con cinco cosas.
 5. **El agente propone, una persona ratifica, un programa comprueba.** Ningún
    mecanismo autoriza a un modelo a ratificar su propia salida.
 
-Y una cosa de la que desconfiar, también en esta guía: nada de esto está
-demostrado. La estructura es barata de añadir y sus beneficios son sobre todo
-costes evitados, que son invisibles a menos que los midas. Si un equipo añade
-trazabilidad y le empeoran a la vez la tasa de defectos y el tiempo de ciclo, la
-trazabilidad no se ha ganado su sitio. Merece medirse antes de creérselo.
+6. **El arnés es donde "obligatorio" se vuelve verdad.** La mayor parte de la
+   distancia entre una demostración y un sistema está en el programa que rodea
+   al modelo, y casi nada de ese programa lo revisa nadie.
+
+7. **Los beneficios que se venden no son los que se han mostrado.** Menos
+   defectos y menos retrabajo se han buscado en cien mil pull requests y no han
+   aparecido. Memoria, decisiones atribuibles y evidencia que cae del proceso
+   no se han medido, y son el argumento de esta guía.
+
+Y una cosa de la que desconfiar, también en esta guía: la estructura es barata
+de añadir y sus beneficios son sobre todo costes evitados, que son invisibles a
+menos que los midas. Si un equipo añade trazabilidad y le empeoran a la vez la
+tasa de defectos y el tiempo de ciclo, la trazabilidad no se ha ganado su
+sitio. La sección 19 dice qué se ha medido ya y con qué resultado. Lo que falta
+por medir es lo tuyo.
 
 ---
 
@@ -1263,7 +2338,9 @@ en ninguna parte.
   como investigación sería un error de categoría. Además, de paso, atribuye el
   artículo de martinfowler.com a Fowler en vez de a Böckeler y adopta su taxonomía
   sin nombrarla, que es la propia advertencia de esta guía sobre las citas
-  heredadas ocurriendo delante de nosotros.
+  heredadas ocurriendo delante de nosotros. Y su única cifra, "estudios
+  controlados" con reducciones de errores "de hasta el 50 %", remite a dos
+  artículos de blog sin ningún estudio detrás, como documenta Hill.
 - Microsoft, *Spec-driven development and AI-native engineering*, blog de
   desarrolladores, 2026. La fuente de la "pérdida de traducción" y de la
   distinción entre autonomía de decisión y de implementación. Es un post de
@@ -1276,34 +2353,121 @@ en ninguna parte.
   implementación, de los marcadores de clarificación, de la idea de las plantillas
   como restricciones, y de la tesis de la "inversión de poder" con la que discute
   esta guía en la sección 7.
+- Brenn Hill, *Does Spec-Driven Development Reduce Defects? An Empirical Test of
+  Industry Claims Across 119 Open-Source Repositories*, documento de trabajo,
+  SSRN, abril de 2026. Leído completo. La única medición a escala que existe, y
+  la fuente de casi toda la sección 19. Sus límites los enumera él mismo y esta
+  guía los repite: código abierto, muestra de conveniencia, medida laxa de
+  "tiene especificación", calidad puntuada por un modelo, y datos en su mayoría
+  anteriores a los flujos agénticos. Los datos y el código están publicados,
+  que es más de lo que puede decir ninguna otra fuente de esta lista.
+- Mamdouh Alenezi, *Specification-Driven Development as the Foundation of
+  AI-Native Enterprise Software Engineering*, arXiv 2607.16680, julio de 2026.
+  Leído completo. Un modelo de referencia formal, la especificación como tupla
+  de obligaciones funcionales, umbrales de calidad, restricciones
+  constitucionales y estructura arquitectónica, con un generador estocástico
+  dentro de un validador determinista. La fuente de "aceptación por observación
+  frente a aceptación por verificación", de la monotonía del validador y del
+  argumento sobre dónde poner el juicio humano. Sin datos propios; su corpus de
+  44 fuentes está verificado una a una, y su apartado 6.4 pesa la evidencia con
+  una honestidad que el resumen del artículo no refleja.
+- Shyam Agarwal, Anmol Singhal, Travis Breaux y Bogdan Vasilescu, *SpecMine: A
+  Large-Scale Corpus of Spec-Driven Development Artifacts*, arXiv 2608.25202,
+  Carnegie Mellon, septiembre de 2026. Leído completo. Un conjunto de datos, no
+  un resultado: el censo de la práctica en GitHub, con la cuenta de marcadores
+  de clarificación y de huecos sin rellenar por documento. La fuente de las
+  cifras de la sección 19 sobre la edad y la composición de la práctica.
+- Norbert Seyff y Martin Glinz, *From Sketches to Specs: AI-Assisted Lightweight
+  Metamodeling for Spec-Driven Development*, artículo de posición, MoDRE 2026.
+  Leído completo. La fuente de la sección 17: la observación de que la práctica
+  calla sobre el origen de las especificaciones, la desambiguación prematura
+  como defecto, la homogeneización hacia notaciones estándar y los principios de
+  diseño para la asistencia. Sin evaluación empírica, y lo dicen.
+- Kevin Ryan, *Spec Driven Development: AI Native Software Engineering*,
+  primera edición, 2026, versión beta temprana. Solo existe el primer capítulo
+  y es el que se ha leído. La fuente de los cinco niveles de Shapiro, del caso
+  StrongDM con sus escenarios externos y sus réplicas de servicios, y de la
+  lectura del cuello de botella que se mueve. Las cifras de METR y de DORA que
+  cita esta guía se citan a través de él y de Fontoura, no de los originales.
+- Juan Palacio, *SDD, Spec Driven Development: cuando el código es la
+  consecuencia*, guía didáctica de Scrum Manager, versión 1.0, abril de 2026.
+  Leída completa. Escrita con asistencia de un modelo y lo declara. La fuente de
+  la "documentación operativa", de la maldición de las instrucciones, de los
+  tres niveles de límites, de la fatiga de aprobación, del cuadro de métricas y
+  de los antipatrones de la sección 18. Es también la fuente que mejor lee la
+  objeción del waterfall. Usa "constitución del proyecto" para el fichero de
+  contexto, no en el sentido de Spec Kit, y la sección 11 lo señala.
+- Felipe Fontoura, *Spec-Driven Development: The Definitive Guide to Building
+  Software with AI Agents*, 2026. Leído completo. La fuente del fichero de
+  estado de una línea y de "que el fichero exista no implica aprobación", de
+  las tres capas de contexto, de "confirma antes de construir", del formato de
+  informe de verificación, del capítulo sobre equipos y del caso de las trece
+  aplicaciones, cuyos límites él mismo escribe. Un libro de practicante con un
+  kit que vender, y aun así el más cuidadoso de las fuentes de practicante en
+  distinguir lo que demostró de lo que cree.
+- François Zaninotto (Marmelab), *Spec-Driven Development: The Waterfall Strikes
+  Back*, noviembre de 2025, y Scott Logic, *Putting Spec Kit Through Its Paces*,
+  noviembre de 2025. Citados a través de Hill y de Palacio, no leídos en el
+  original. Son las dos críticas de practicante que la sección 19 recoge.
+
+Tres capítulos son más ligeros en fuentes que el resto y sería deshonesto no
+decir cuáles. La sección 9 destila las fuentes de arriba en vez de añadirles: los
+mecanismos son suyos, la reducción a siete principios es mía, y quien trazara la
+línea en otro sitio no estaría obviamente equivocado. La sección 16 es sobre todo
+práctica. "Arnés" es uso corriente en la comunidad de herramientas para agentes y
+el material de Ralph aporta el argumento del estado en disco, pero el orden de
+construcción, el orden de las palancas de reducción de errores y la tabla de
+permisos por fase son lo que ha funcionado y no lo que se ha publicado, y deben
+leerse con ese peso. Y la sección 19 es la que más depende de un único estudio,
+que además todavía no ha pasado por revisión de pares.
 
 ---
 
 ## Preguntas abiertas para la siguiente revisión
 
-- Verificar todas las citas de arriba. Las citas heredadas son la vía por la que se
-  propagan los errores, y la entrada de Piskala contiene ahora un ejemplo resuelto
-  de ello.
-- La guía tiene ahora tres fuentes a favor de la práctica y una que discute con
-  ella. Esa proporción favorece a la práctica. Encontrar el mejor argumento
-  disponible de que esto es una moda, y responderlo o concederlo.
-- La comparativa de herramientas ya no está, desde esta revisión. Era la sección
-  que iba a envejecer más rápido, los hallazgos prácticos de Böckeler ya habían
-  empezado a contradecir partes de ella, y una guía que envejece mal en una
-  sección hace que se desconfíe de todas. Lo que valía la pena de ahí, la
-  constitución como ejemplo de una herramienta que llega con opiniones, se movió a
-  la sección 10.
+- Verificar todas las citas de arriba. Las citas heredadas son la vía por la que
+  se propagan los errores, y la entrada de Piskala contiene ahora dos ejemplos
+  resueltos de ello. En particular, leer METR, DORA y Pearce en el original
+  antes de que la sección 19 los cite como si lo hubiéramos hecho.
+- La comparativa de herramientas ya no está, desde la revisión 0.4. Era la
+  sección que iba a envejecer más rápido, los hallazgos prácticos de Böckeler ya
+  habían empezado a contradecir partes de ella, y una guía que envejece mal en
+  una sección hace que se desconfíe de todas. Lo que valía la pena de ahí, la
+  constitución como ejemplo de una herramienta que llega con opiniones, se movió
+  a la sección 11.
 - El capítulo legal necesita que lo contradiga alguien que se dedique a esto. Está
   escrito desde el lado de la ingeniería de una conversación que tiene dos lados.
 - Añadir un ejemplo resuelto de principio a fin, completo, en vez de en fragmentos.
-- Considerar una sección corta sobre coste: la estructura no es gratis, y el
-  argumento honesto a su favor tiene que incluir la sobrecarga en tokens y en
-  tiempo. La propia comparación de Spec Kit, unas doce horas de trabajo de
-  documentación contra quince minutos de comandos, es la afirmación con la que
-  tendría que enfrentarse esa sección. No es obviamente falsa y no está midiendo lo
-  mismo en los dos lados: los quince minutos compran artefactos que nadie ha leído
-  todavía.
-- La idea de la constitución merece más que un párrafo dentro de una entrada sobre
-  herramientas. Si las líneas rojas de un proyecto van en un fichero, las preguntas
-  son quién ratifica un cambio en él, y qué lo diferencia de una guía de estilo que
-  nadie sigue.
+  Fontoura enseña cómo se hace: cinco especificaciones completas para un mismo
+  producto, cada requisito trazado a una decisión de diseño y a una tarea con
+  comando de verificación. La promoción de puntos de esta guía podría recibir el
+  mismo trato en un apéndice.
+- La sección 19 responde a la pregunta de la revisión anterior sobre el mejor
+  argumento en contra, y la sección 3 sigue tratando el coste solo en cualitativo.
+  La propia comparación de Spec Kit, unas doce horas de trabajo de documentación
+  contra quince minutos de comandos, y el "diez veces más lento" de Scott Logic
+  son las cifras con las que tendría que enfrentarse un apartado de coste.
+- La pregunta sobre la constitución está medio respondida en la sección 11: se
+  distingue de una guía de estilo cuando un validador la ejecuta. Queda la otra
+  mitad, quién ratifica un cambio en ella y con qué procedimiento.
+- La sección 17 propone una comprobación nueva, negarse a ratificar un requisito
+  sin origen, y nadie la ha ejecutado. Es barata de probar sobre un repositorio
+  real y conviene hacerlo antes de recomendarla con más convicción.
+- La sección 16 ordena las palancas de reducción de errores por retorno sobre
+  esfuerzo. Ese orden es un juicio de la práctica y nada de aquí lo mide. La
+  afirmación de que la calidad de los mensajes de error supera a la ingeniería
+  de prompts es la más comprobable de esta guía y la más embarazosa si resulta
+  falsa.
+- El testing por mutación se recomienda en la sección 16 como oráculo de los
+  oráculos, sobre un subconjunto de ficheros. Nadie aquí lo ha ejecutado a esa
+  escala sobre un repositorio cuyos tests escribió un agente, que es
+  exactamente el caso para el que se recomienda.
+- La guía tiene ahora veinte secciones y el subtítulo promete brevedad. Las
+  secciones 9, 16, 17, 18 y 19 la han empujado muy por encima de lo que
+  promete. La siguiente revisión debería o quitar "breve" o quitar capítulos, y
+  lo segundo es la decisión más difícil de tomar honestamente sobre lo que uno
+  mismo escribe.
+- La sección 19 envejecerá antes que ninguna. Hill es un documento de trabajo,
+  SpecMine es un conjunto de datos que alguien explotará pronto, y las
+  replicaciones de los casos favorables llegarán o no. Releerla en cada
+  revisión.
